@@ -1,0 +1,71 @@
+<div class="page-content">
+	 <div class="col-sm-6 pull-right">
+        <button class="btn btn-sm btn-primary pull-right" onclick="javascript:window.location.href = 'index'">
+            返回列表
+            <i class="icon-reply icon-only"></i>
+        </button>
+    </div>
+    <div class="page-header">
+        <h1>
+            {:model('menu')->getParentNname()}轮播图管理
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {:input('id')?'编辑':'新增'}
+            </small>
+        </h1>
+    </div><!-- /.page-header -->
+
+     <div class="page-content">
+     	<div class="row">
+        <div class="col-xs-12">
+        <form class="form-horizontal" role="form" action="{:input('id')?'save_edit_banner':'save_banner'}" method="post" name="myfrom" enctype="multipart/form-data">
+        	  <div class="form-group" >
+			    <!-- <label for="exampleInputEmail1">名称</label> -->
+			    <input type="hidden" class="form-control" id="exampleInputEmail1" placeholder="name" name="id" style="width: 500px;" value="{$banner_list.id}">
+			  </div>
+			  <div class="form-group" >
+			    <label for="exampleInputEmail1">名称</label>
+			    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="name" name="name" style="width: 500px;" value="{$banner_list.name}">
+			  </div>
+			  <div class="form-group">
+			    <label for="exampleInputPassword1">URL地址</label>
+			    <input type="text" class="form-control" id="exampleInputPassword1" placeholder="http://" name="url" style="width: 500px;" value="{$banner_list.url}">
+			    <p class="help-block">填写的时候请添加http://或https://.</p>
+			  </div>
+			  <div class="form-group">
+			    <label for="exampleInputPassword1">状态</label>
+			    <label>
+				    <input type="radio" name="status" id="optionsRadios3" value="1" {if condition='$banner_list.status==1'}checked="checked"{/if}>
+				    显示
+				 </label>
+				 <label>
+				    <input type="radio" name="status" id="optionsRadios3" value="0" {if condition='$banner_list.status==0'}checked="checked"{/if}>
+				    不显示
+				 </label>
+			  </div>
+			  <div class="form-group">
+			    <label for="exampleInputFile">图片</label>
+			    <input type="file" id="exampleInputFile" name="img" value="{$banner_list.image}">
+			    <p class="help-block">Example block-level help text here.</p>
+			  </div>
+			  
+			  
+			  <div class="clearfix form-actions">
+                    <div class="col-md-offset-3 col-md-9">
+                        <button class="btn btn-info" type="button" onclick="myfrom.submit()">
+                            <i class="ace-icon fa fa-check bigger-110"></i>
+                            提交
+                        </button>
+                        &nbsp; &nbsp; &nbsp;
+                        <button class="btn" type="reset">
+                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                            重置
+                        </button>
+                    </div>
+                </div>
+	</form>
+		</div>
+	</div>
+	</div>
+
+</div>

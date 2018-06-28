@@ -1,0 +1,70 @@
+<div class="page-content">
+	 <div class="col-sm-6 pull-right">
+        <button class="btn btn-sm btn-primary pull-right" onclick="javascript:window.location.href = 'index'">
+            返回列表
+            <i class="icon-reply icon-only"></i>
+        </button>
+    </div>
+    <div class="page-header">
+        <h1>
+            {:model('menu')->getParentNname()}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {:input('id')?'编辑':'新增'}
+            </small>
+        </h1>
+    </div><!-- /.page-header -->
+
+     <div class="page-content">
+     	<div class="row">
+        <div class="col-xs-12">
+        <form class="form-horizontal" role="form" action="{:input('id')?'save_edit_sort':'save_sort'}" method="post" name="myfrom" enctype="multipart/form-data">
+        	
+			  <div class="form-group" >
+			    <label for="exampleInputEmail1">文章分类名称</label>
+			    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="name" name="name" value="{$info.name}" style="width: 500px;">
+			    <input type="hidden" class="form-control" id="exampleInputEmail1" placeholder="name" name="id" value="{$info.id}" style="width: 500px;">
+			  </div>
+			  <div class="form-group">
+			    <label for="exampleInputPassword1">上级分类</label>
+			   <select class="form-control" name="parent_id" style="width: 500px;">
+				  <option value="0">顶级分类</option>
+				  {volist name="sort" id="vo"}
+				  <option value="{$vo.id}">&nbsp;&nbsp;|----{$vo.name}</option>
+				  {/volist}
+			  </select>
+			    <p class="help-block">默认为顶级分类</p>
+			  </div>
+			  <div class="form-group">
+			    <label for="exampleInputPassword1">状态</label>
+			    <label>
+				    <input type="radio" name="status" id="optionsRadios3" value="1" {if condition='$info.status==1'}checked="checked"{/if}>
+				    显示
+				 </label>
+				 <label>
+				    <input type="radio" name="status" id="optionsRadios3" value="0" {if condition='$info.status==0'}checked="checked"{/if}>
+				    不显示
+				 </label>
+			  </div>
+			  
+			  
+			  
+			  <div class="clearfix form-actions">
+                    <div class="col-md-offset-3 col-md-9">
+                        <button class="btn btn-info" type="button" onclick="myfrom.submit()">
+                            <i class="ace-icon fa fa-check bigger-110"></i>
+                            提交
+                        </button>
+                        &nbsp; &nbsp; &nbsp;
+                        <button class="btn" type="reset">
+                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                            重置
+                        </button>
+                    </div>
+                </div>
+	</form>
+		</div>
+	</div>
+	</div>
+
+</div>
