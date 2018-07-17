@@ -18,6 +18,7 @@ class LogController extends CommonController {
 	
         $this->assign('lists', $lists);
         return $this->fetch();
+
     }
 
 }

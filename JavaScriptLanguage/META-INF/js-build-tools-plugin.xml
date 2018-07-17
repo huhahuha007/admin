@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<idea-plugin>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="JavaScript.buildToolService"
+                    interface="com.intellij.lang.javascript.buildTools.base.JsbtService"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="JavaScript">
+    <buildToolService implementation="com.intellij.lang.javascript.buildTools.grunt.GruntService"/>
+    <buildToolService implementation="com.intellij.lang.javascript.buildTools.gulp.GulpService"/>
+    <buildToolService implementation="com.intellij.lang.javascript.buildTools.npm.NpmScriptsService"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <postStartupActivity implementation="com.intellij.lang.javascript.buildTools.base.JsbtStartupActivity"/>
+    <refactoring.elementListenerProvider implementation="com.intellij.lang.javascript.buildTools.base.JsbtRefactoringElementListenerProvider"/>
+    <search.topHitProvider implementation="com.intellij.lang.javascript.buildTools.base.JsbtTopHitProvider"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.buildTools.base.JsbtTreeLayoutManager"/>
+
+    <!-- Grunt -->
+    <projectService serviceImplementation="com.intellij.lang.javascript.buildTools.grunt.GruntfileManager"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.buildTools.grunt.rc.GruntNonSharedSettingsManager"/>
+    <configurationType implementation="com.intellij.lang.javascript.buildTools.grunt.rc.GruntConfigurationType"/>
+    <stepsBeforeRunProvider implementation="com.intellij.lang.javascript.buildTools.grunt.beforeRun.GruntBeforeRunTaskProvider"/>
+
+    <!-- Gulp -->
+    <configurationType implementation="com.intellij.lang.javascript.buildTools.gulp.rc.GulpConfigurationType"/>
+    <runConfigurationProducer implementation="com.intellij.lang.javascript.buildTools.gulp.rc.GulpRunConfigurationProducer"/>
+    <programRunner implementation="com.intellij.lang.javascript.buildTools.gulp.rc.GulpRunProgramRunner"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.buildTools.gulp.GulpfileManager"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.buildTools.gulp.rc.GulpNonSharedSettingsManager"/>
+    <psi.referenceContributor language="JavaScript"
+                              implementation="com.intellij.lang.javascript.buildTools.gulp.GulpReferenceContributor"/>
+    <stepsBeforeRunProvider implementation="com.intellij.lang.javascript.buildTools.gulp.beforeRun.GulpBeforeRunTaskProvider"/>
+
+    <!-- npm scripts -->
+    <projectService serviceImplementation="com.intellij.lang.javascript.buildTools.npm.PackageJsonFileManager"/>
+    <configurationType implementation="com.intellij.lang.javascript.buildTools.npm.rc.NpmConfigurationType"/>
+    <runConfigurationProducer implementation="com.intellij.lang.javascript.buildTools.npm.rc.NpmRunConfigurationProducer"/>
+    <stepsBeforeRunProvider implementation="com.intellij.lang.javascript.buildTools.npm.beforeRun.NpmBeforeRunTaskProvider"/>
+  </extensions>
+
+  <actions>
+    <group>
+      <action id="ShowGruntTasks" class="com.intellij.lang.javascript.buildTools.grunt.ShowGruntTasksAction"/>
+      <action id="ShowGulpTasks" class="com.intellij.lang.javascript.buildTools.gulp.ShowGulpTasksAction"/>
+      <action id="ShowNpmScripts" class="com.intellij.lang.javascript.buildTools.npm.ShowNpmScriptsAction"/>
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+      <add-to-group group-id="EditorTabPopupMenu" anchor="last"/>
+    </group>
+    <action id="RunJsbtTask" class="com.intellij.lang.javascript.buildTools.base.actions.JsbtRunTaskAction">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+      <keyboard-shortcut keymap="$default" first-keystroke="alt F11"/>
+      <keyboard-shortcut keymap="Eclipse" first-keystroke="shift alt F11" replace-all="true"/>
+      <keyboard-shortcut keymap="Visual Studio" first-keystroke="ctrl shift alt F11" replace-all="true"/>
+    </action>
+  </actions>
+
+</idea-plugin>

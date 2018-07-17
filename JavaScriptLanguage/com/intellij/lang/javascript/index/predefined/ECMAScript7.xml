@@ -1,0 +1,15 @@
+<Library paramPolicyMandatory="true">
+  <class name="Array" createStaticVar="false" template="T">
+    <method name="includes" returnType="boolean">
+      <param name="searchElement" type="T"/>
+      <param name="fromIndex" type="number" optional="true"/>
+    </method>
+  </class>
+  <class name="Object" createStaticVar="false">
+    <static>
+      <method name="values" returnType="Array">
+        <param name="obj"/>
+      </method>
+    </static>
+  </class>
+</Library>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src='../../../../public/js/socket.io.js'></script>
+    <script src='../../../../public/js/jquery.js'></script>
+    <script src='../../../../public/js/notify.js'></script>
+    <link href="../../../../public/js/order.css"  type="text/css" />
+    <link href="../../../../public/js/layui.css"  type="text/css" />
+    <meta charset="UTF-8">
+    <title>$Title$</title>
+</head>
+
+<body>
+<!--<p class="message">-->
+<!--</p>-->
+
+<fieldset class="layui-elem-field layui-field-title site-title">
+    <legend><a name="default">最新未处理订单</a></legend>
+</fieldset>
+{volist name="order" id="vo"}
+<div class="layui-containe" style="float: left ; width: 30% ; background: #d0d0d0 ; margin: 20px">
+    <!-- <div class="layui-row layui-col-space5"> -->
+    <div class="layui-col-md3" style="">
+        <div class="layui-card">
+            <div class="layui-card-header" style="font-size: 20px; margin: 0 auto">订单：{$vo.order_num}&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                time：{$vo.addtime}</div>
+            <hr class="layui-bg-black">
+            <div class="layui-card-body" style="position: relative; left: 20%">
+                <table>
+                    <tr><td>桌号：</td><td>{$vo.table}</td></tr>
+                    <?php  foreach(json_decode($vo['goods'],true) as $k=>$v){ ?>
+                    <tr style="">
+                        <td>菜单：</td>
+                        <td>
+                            {$v.goods_name}
+                        </td>
+                    </tr>
+                    <?php } ?>
+                    <tr><td>总计：</td><td>{$vo.goodstotal}</td></tr>
+                    <tr><td>是否支付：</td><td>是</td></tr>
+                    <tr><td>留言：</td><td>加辣椒</td></tr>
+                    <tr><td>操作：</td><td><button class="layui-btn layui-btn-xs">完成订单</button></td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- </div> -->
+</div>
+{/volist}
+
+<script>
+    // 连接服务端，workerman.net:2120换成实际部署web-msg-sender服务的域名或者ip
+    var socket = io('http://'+document.domain+':2120');
+    // uid可以是自己网站的用户id，以便针对uid推送以及统计在线人数
+    uid = 123;
+    // socket连接后以uid登录
+    socket.on('connect', function(){
+        socket.emit('login', uid);
+    });
+    // 后端推送来消息时
+    socket.on('new_msg', function(msg){
+        console.log("收到消息："+msg);
+        location.reload();
+        //$('.message').html("收到消息："+msg)
+    });
+    // 后端推送来在线数据时
+    socket.on('update_online_count', function(online_stat){
+        console.log(online_stat);
+
+    });
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<idea-plugin>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <configurationType implementation="com.intellij.javascript.jest.JestConfigurationType"/>
+    <iconProvider implementation="com.intellij.javascript.jest.JestConfigIconProvider"/>
+    <fileTypeFactory implementation="com.intellij.javascript.jest.JestFileTypeFactory"/>
+    <runConfigurationProducer implementation="com.intellij.javascript.jest.JestRunConfigurationProducer"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="JavaScript">
+    <JsonSchema.ProviderFactory implementation="com.intellij.javascript.jest.JestSchemaProviderFactory"/>
+  </extensions>
+
+</idea-plugin>

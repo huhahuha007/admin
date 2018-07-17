@@ -1,0 +1,5 @@
+function m(arg) {
+    if(arg == null) {
+        throw new Error('arg null');
+    }
+}

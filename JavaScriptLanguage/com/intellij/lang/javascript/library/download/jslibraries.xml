@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<artifacts>
+  <artifact name="jQuery" version="2.0.0" >
+    <item name="debug" url="http://code.jquery.com/jquery-2.0.0.js"/>
+  </artifact>
+  <artifact name="jQuery UI" version="1.10.2">
+    <item name="debug" url="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.js"/>
+  </artifact>
+  <artifact name="ExtJS GPL" version="4.2">
+    <item name="debug" url="http://cdn.sencha.io/ext-4.2.0-gpl/ext-all-debug-w-comments.js"/>
+  </artifact>
+  <artifact name="Prototype" version="1.7.1">
+    <item name="debug" url="https://ajax.googleapis.com/ajax/libs/prototype/1.7.1/prototype.js"/>
+  </artifact>
+    <artifact name="Dojo" version="1.8.3">
+    <item name="debug" url="http://download.dojotoolkit.org/release-1.8.3/dojo.js.uncompressed.js"/>
+  </artifact>
+    <artifact name="MooTools" version="1.4.5">
+    <item name="debug" url="http://mootools.net/download/get/mootools-core-1.4.5-full-nocompat.js"/>
+  </artifact>
+    <artifact name="script.aculo.us" version="1.9.0">
+    <item name="debug" url="https://ajax.googleapis.com/ajax/libs/scriptaculous/1.9.0/scriptaculous.js"/>
+  </artifact>
+  <artifact name="YUI" version="3.10.0">
+    <item name="debug" url="http://yui.yahooapis.com/3.10.0/build/yui/yui.js"/>
+  </artifact>
+  <artifact name="Knockout" version="2.2.1">
+    <item name="debug" url="http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.debug.js"/>
+  </artifact>
+  <artifact name="Modernizr" version="2.6.2">
+    <item name="debug" url="http://www.modernizr.com/downloads/modernizr-2.6.2.js"/>
+  </artifact>
+</artifacts>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<idea-plugin>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <configurationType implementation="com.intellij.javascript.protractor.ProtractorConfigurationType"/>
+    <runConfigurationProducer implementation="com.intellij.javascript.protractor.ProtractorRunConfigurationProducer"/>
+    <iconProvider implementation="com.intellij.javascript.protractor.ProtractorConfigIconProvider"/>
+  </extensions>
+
+</idea-plugin>

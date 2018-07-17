@@ -1,0 +1,246 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "JSON schema for Jest configuration files",
+  "id": "https://facebook.github.io/jest/docs/configuration.html",
+  "type": "object",
+  "properties": {
+    "automock": {
+      "type": "boolean",
+      "default": false,
+      "description": "This option is disabled by default. If you are introducing Jest to a large organization with an existing codebase but few tests, enabling this option can be helpful to introduce unit tests gradually. Modules can be explicitly auto-mocked using jest.mock(moduleName)."
+    },
+    "browser":{
+      "type": "boolean",
+      "default": false,
+      "description": "Respect Browserify's \"browser\" field in package.json when resolving modules. Some modules export different versions based on whether they are operating in Node or a browser."
+    },
+    "bail": {
+      "type": "boolean",
+      "default": false,
+      "description": "By default, Jest runs all tests and produces all errors into the console upon completion. The bail config option can be used here to have Jest stop running tests after the first failure."
+    },
+    "cacheDirectory": {
+      "type": "string",
+      "description": "The directory where Jest should store its cached dependency information"
+    },
+    "collectCoverage": {
+      "type": "boolean",
+      "default": false,
+      "description": "Indicates whether the coverage information should be collected while executing the test"
+    },
+    "collectCoverageFrom": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "An array of glob patterns indicating a set of files for which coverage information should be collected"
+    },
+    "coverageDirectory": {
+      "type": "string",
+      "description": "The directory where Jest should output its coverage files"
+    },
+    "coveragePathIgnorePatterns": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "oneOf": [
+          {"not": {"enum": ["/node_modules/"]}},
+          {"enum": ["/node_modules/"]}
+        ]
+      },
+      "description": "An array of regexp pattern strings that are matched against all file paths before executing the test. If the file path matches any of the patterns, coverage information will be skipped."
+    },
+    "coverageReporters": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "oneOf": [
+          {"not": {"enum": ["json", "lcov", "text"]}},
+          {"enum": ["json", "lcov", "text"]}
+        ]
+      },
+      "description": "A list of reporter names that Jest uses when writing coverage reports. Any istanbul reporter can be used."
+    },
+    "coverageThreshold": {
+      "type": "object",
+      "description": "This will be used to configure minimum threshold enforcement for coverage results. If the thresholds are not met, jest will return failure."
+    },
+    "globals": {
+      "type": "object",
+      "default": {},
+      "description": "A set of global variables that need to be available in all test environments."
+    },
+    "moduleFileExtensions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "oneOf": [
+          {"not": {"enum": ["js", "json", "jsx", "node"]}},
+          {"enum": ["js", "json", "jsx", "node"]}
+        ]
+      },
+      "description": "An array of file extensions your modules use. If you require modules without specifying a file extension, these are the extensions Jest will look for."
+    },
+    "moduleDirectories": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "oneOf": [
+          {"not": {"enum": ["node_modules"]}},
+          {"enum": ["node_modules"]}
+        ]
+      },
+      "description": "An array of directory names to be searched recursively up from the requiring module's location."
+    },
+    "moduleNameMapper": {
+      "type": "object",
+      "description": "A map from regular expressions to module names that allow to stub out resources, like images or styles with a single module."
+    },
+    "modulePathIgnorePatterns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "An array of regexp pattern strings that are matched against all module paths before those paths are to be considered 'visible' to the module loader."
+    },
+    "modulePaths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "An alternative API to setting the NODE_PATH env variable, modulePaths is an array of absolute paths to additional locations to search when resolving modules."
+    },
+    "notify": {
+      "type": "boolean",
+      "default": false,
+      "description": "Activates notifications for test results."
+    },
+    "preset": {
+      "type": "string",
+      "description": "A preset that is used as a base for Jest's configuration. A preset should point to an npm module that exports a jest-preset.json module on its top level."
+    },
+    "clearMocks": {
+      "type": "boolean",
+      "default": false,
+      "description": "Automatically clear mock calls and instances between every test. Equivalent to calling jest.clearAllMocks() between each test."
+    },
+    "resetMocks": {
+      "type": "boolean",
+      "default": false,
+      "description": "Automatically reset mock state between every test. Equivalent to calling jest.resetAllMocks() between each test."
+    },
+    "resetModules": {
+      "type": "boolean",
+      "default": false,
+      "description": "If enabled, the module registry for every test file will be reset before running each individual test."
+    },
+    "rootDir": {
+      "type": "string",
+      "description": "The root directory that Jest should scan for tests and modules within."
+    },
+    "roots": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "oneOf": [
+          {"not": {"enum": ["<rootDir>"]}},
+          {"enum": ["<rootDir>"]}
+        ]
+      },
+      "description": "A list of paths to directories that Jest should use to search for files in."
+    },
+    "setupFiles": {
+      "type": "array",
+      "description": "The paths to modules that run some code to configure or set up the testing environment before each test."
+    },
+    "setupTestFrameworkScriptFile": {
+      "type": "string",
+      "description": "The path to a module that runs some code to configure or set up the testing framework before each test. Since setupFiles executes before the test framework is installed in the environment, this script file presents you the opportunity of running some code immediately after the test framework has been installed in the environment."
+    },
+    "snapshotSerializers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "A list of paths to snapshot serializer modules Jest should use for snapshot testing."
+    },
+    "testEnvironment": {
+      "type": "string",
+      "default": "jsdom",
+      "description": "The test environment that will be used for testing."
+    },
+    "testMatch": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "oneOf": [
+          {"not": {"enum": ["**/__tests__/**/*.js?(x)", "**/?(*.)(spec|test).js?(x)"]}},
+          {"enum": ["**/__tests__/**/*.js?(x)", "**/?(*.)(spec|test).js?(x)"]}
+        ]
+      },
+      "description": "The glob patterns Jest uses to detect test files."
+    },
+    "testPathIgnorePatterns": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "oneOf": [
+          {"not": {"enum": ["/node_modules/"]}},
+          {"enum": ["/node_modules/"]}
+        ]
+      },
+      "description": "An array of regexp pattern strings that are matched against all test paths before executing the test."
+    },
+    "testRegex": {
+      "type": "string",
+      "default": "(/__tests__/.*|(\\.|/)(test|spec))\\.jsx?$",
+      "description": "The pattern Jest uses to detect test files."
+    },
+    "testResultsProcessor": {
+      "type": "string",
+      "description": "This option allows the use of a custom results processor."
+    },
+    "testRunner": {
+      "type": "string",
+      "default": "jasmine2",
+      "description": "This option allows use of a custom test runner."
+    },
+    "testURL": {
+      "type": "string",
+      "default": "about:blank",
+      "description": "This option allows use of a custom test runner."
+    },
+    "timers": {
+      "type": "string",
+      "default": "real",
+      "description": "Setting this value to fake allows the use of fake timers for functions such as setTimeout."
+    },
+    "transform": {
+      "type": "object",
+      "description": "A map from regular expressions to paths to transformers."
+    },
+    "transformIgnorePatterns": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "oneOf": [
+          {"not": {"enum": ["/node_modules/"]}},
+          {"enum": ["/node_modules/"]}
+        ]
+      },
+      "description": "An array of regexp pattern strings that are matched against all source file paths before transformation."
+    },
+    "unmockedModulePathPatterns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them."
+    },
+    "verbose": {
+      "type": "boolean",
+      "default": false,
+      "description": "Indicates whether each individual test should be reported during the run."
+    }
+  }
+}

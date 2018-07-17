@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<idea-plugin>
+  <extensions defaultExtensionNs="org.intellij.intelliLang">
+    <languageSupport implementation="com.intellij.plugins.intelliLang.inject.JSLanguageInjectionSupport"/>
+    <injectionConfig config="resources/jsInjections.xml"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <patterns.patternClass className="com.intellij.lang.javascript.patterns.JSPatterns" alias="js"/>
+    <lang.parserDefinition language="JSRegexp" implementationClass="com.intellij.lang.javascript.inject.JSRegexpParserDefinition"/>
+    <lang.parserDefinition language="JSUnicodeRegexp" implementationClass="com.intellij.lang.javascript.inject.JSUnicodeRegexpParserDefinition"/>
+    <regExpLanguageHost forClass="com.intellij.lang.javascript.psi.impl.JSLiteralExpressionImpl"
+                        implementationClass="com.intellij.lang.javascript.inject.JSRegexpHost"/>
+    <lang.syntaxHighlighterFactory language="JSRegexp"
+                                   implementationClass="com.intellij.lang.javascript.inject.JSRegExpSyntaxHighlighterFactory"/>
+    <regExpModifierProvider language="JavaScript" implementationClass="com.intellij.lang.javascript.inject.JSRegExpModifierProvider"/>
+    <regExpMatcherProvider language="JSRegexp" implementationClass="com.intellij.lang.javascript.inject.JsRegExpMatcherProvider"/>
+    <multiHostInjector implementation="com.intellij.plugins.intelliLang.inject.JSConfigurationInjector" order="first, after TemporaryPlacesInjector"/>
+    <multiHostInjector implementation="com.intellij.plugins.intelliLang.inject.JSCommentInjector" order="first, after TemporaryPlacesInjector"/>
+    <intentionAction>
+      <className>JSInjectWithCommentIntentionAction</className>
+    </intentionAction>
+    <intentionAction>
+      <className>JSDontFormatCommentInjectionAction</className>
+    </intentionAction>
+  </extensions>
+</idea-plugin>

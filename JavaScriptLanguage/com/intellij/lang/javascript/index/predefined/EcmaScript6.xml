@@ -1,0 +1,446 @@
+<Library paramPolicyMandatory="true">
+  <class name="Object" createStaticVar="false">
+    <static>
+      <method name="assign" returnType="*">
+        <param name="target" type="*"/>
+        <param name="sources" rest="true" type="*"/>
+      </method>
+      <method name="getOwnPropertySymbols" returnType="Symbol[]">
+        <param name="O" type="*"/>
+      </method>
+      <method name="is" returnType="boolean">
+        <param name="value1" type="*"/>
+        <param name="value2" type="*"/>
+      </method>
+    </static>
+  </class>
+
+  <class name="Function" createStaticVar="false">
+    <property name="name" readonly="true" type="string"/>
+  </class>
+
+  <class name="Symbol">
+    <method name="__constructor__" returnType="Symbol">
+      <param name="description" optional="true"/>
+    </method>
+    <static>
+      <method name="for" returnType="Symbol">
+        <param name="key"/>
+      </method>
+      <property name="hasInstance" type="Symbol" readonly="true"/>
+      <property name="isConcatSpreadable" type="Symbol" readonly="true"/>
+      <property name="iterator" type="Symbol" readonly="true"/>
+      <method name="keyFor">
+        <param name="sym" type="Symbol"/>
+      </method>
+      <property name="match" type="Symbol" readonly="true"/>
+      <property name="replace" type="Symbol" readonly="true"/>
+      <property name="search" type="Symbol" readonly="true"/>
+      <property name="species" type="Symbol" readonly="true"/>
+      <property name="split" type="Symbol" readonly="true"/>
+      <property name="toPrimitive" type="Symbol" readonly="true"/>
+      <property name="toStringTag" type="Symbol" readonly="true"/>
+      <property name="unscopables" type="Symbol" readonly="true"/>
+    </static>
+  </class>
+
+  <class name="Number" createStaticVar="false">
+    <static>
+      <property name="EPSILON" type="number" readonly="true"/>
+      <method name="isFinite" returnType="boolean">
+        <param name="number"/>
+      </method>
+      <method name="isInteger" returnType="boolean">
+        <param name="number"/>
+      </method>
+      <method name="isNaN" returnType="boolean">
+        <param name="number"/>
+      </method>
+      <method name="isSafeInteger" returnType="boolean">
+        <param name="number"/>
+      </method>
+      <property name="MAX_SAFE_INTEGER" type="number" readonly="true"/>
+      <property name="MIN_SAFE_INTEGER" type="number" readonly="true"/>
+      <method name="parseFloat" returnType="number">
+        <param name="string" type="string"/>
+      </method>
+      <method name="parseInt" returnType="number">
+        <param name="string" type="string"/>
+        <param name="radix" type="number" optional="true"/>
+      </method>
+    </static>
+  </class>
+
+  <class name="Math" createStaticVar="false">
+    <static>
+      <method name="acosh" returnType="number">
+        <param name="x" type="number"/>
+      </method>
+      <method name="asinh" returnType="number">
+        <param name="x" type="number"/>
+      </method>
+      <method name="atanh" returnType="number">
+        <param name="x" type="number"/>
+      </method>
+      <method name="cbrt" returnType="number">
+        <param name="x" type="number"/>
+      </method>
+      <method name="clz32" returnType="number">
+        <param name="x" type="number"/>
+      </method>
+      <method name="cosh" returnType="number">
+        <param name="x" type="number"/>
+      </method>
+      <method name="expm1" returnType="number">
+        <param name="x" type="number"/>
+      </method>
+      <method name="fround" returnType="number">
+        <param name="x" type="number"/>
+      </method>
+      <method name="hypot" returnType="number">
+        <param name="values" rest="true" type="number"/>
+      </method>
+      <method name="imul" returnType="number">
+        <param name="x" type="number"/>
+        <param name="y" type="number"/>
+      </method>
+      <method name="log1p" returnType="number">
+        <param name="x" type="number"/>
+      </method>
+      <method name="log10" returnType="number">
+        <param name="x" type="number"/>
+      </method>
+      <method name="log2" returnType="number">
+        <param name="x" type="number"/>
+      </method>
+      <method name="sign" returnType="number">
+        <param name="x" type="number"/>
+      </method>
+      <method name="sinh" returnType="number">
+        <param name="x" type="number"/>
+      </method>
+      <method name="tanh" returnType="number">
+        <param name="x" type="number"/>
+      </method>
+      <method name="trunc" returnType="number">
+        <param name="x" type="number"/>
+      </method>
+    </static>
+  </class>
+
+  <class name="String" createStaticVar="false">
+    <static>
+      <method name="fromCodePoint" returnType="string">
+        <param name="codePoints" rest="true" type="number"/>
+      </method>
+      <method name="raw" returnType="string">
+        <param name="template"/>
+        <param name="substitutions" rest="true"/>
+      </method>
+    </static>
+    <method name="codePointAt" returnType="number">
+      <param name="pos" type="number"/>
+    </method>
+    <method name="endsWith" returnType="boolean">
+      <param name="searchString" type="string"/>
+      <param name="endPosition" optional="true" type="number"/>
+    </method>
+    <method name="includes" returnType="boolean">
+      <param name="searchString" type="string"/>
+      <param name="position" optional="true" type="number"/>
+    </method>
+    <method name="normalize" returnType="string">
+      <param name="form" optional="true" type="string"/>
+    </method>
+    <method name="repeat" returnType="string">
+      <param name="count" type="number"/>
+    </method>
+    <method name="startsWith" returnType="boolean">
+      <param name="searchString" type="string"/>
+      <param name="position" optional="true" type="number"/>
+    </method>
+  </class>
+
+  <class name="RegExp" createStaticVar="false">
+    <property name="flags" type="string" readonly="true"/>
+    <property name="sticky" type="boolean" readonly="true"/>
+    <property name="unicode" type="boolean" readonly="true"/>
+  </class>
+
+  <class name="Array" createStaticVar="false" template="T" extends="Iterable.&lt;T&gt;">
+    <static>
+      <method name="from" returnType="Array">
+        <param name="items"/>
+        <param name="mapfn" type="Function" optional="true"/>
+        <param name="thisArg" optional="true"/>
+      </method>
+      <method name="of" returnType="Array">
+        <param name="items" rest="true"/>
+      </method>
+    </static>
+    <method name="copyWithin" returnType="Array.&lt;T&gt;">
+      <param name="target" type="number"/>
+      <param name="start" type="number"/>
+      <param name="enf" type="number" optional="true"/>
+    </method>
+    <method name="entries" returnType="Iterator.&lt;*&gt;">
+    </method>
+    <method name="fill" returnType="Array.&lt;T&gt;">
+      <param name="value" type="T"/>
+      <param name="start" type="number" optional="true"/>
+      <param name="end" type="number" optional="true"/>
+    </method>
+    <method name="find" returnType="T">
+      <param name="predicate" type="function(T, number, obj): boolean"/>
+      <param name="thisArg" optional="true"/>
+    </method>
+    <method name="findIndex" returnType="number">
+      <param name="predicate" type="function(T, number, obj): boolean"/>
+      <param name="thisArg" optional="true"/>
+    </method>
+    <method name="keys" returnType="Iterator.&lt;number&gt;">
+    </method>
+    <method name="values" returnType="Iterator.&lt;T&gt;">
+    </method>
+  </class>
+
+  <trait name="Iterable" template="T"/>
+
+  <trait name="Iterator" template="T">
+    <method name="next" returnType="T"/>
+  </trait>
+
+  <class name="Uint8ClampedArray" extends="ArrayBufferView">
+    <static>
+      <property name="BYTES_PER_ELEMENT" type="int" value="1" readOnly="true"/>
+    </static>
+    <method name="__constructor__">
+      <param name="bufferOrArrayOrLength" optional="false"/>
+      <param name="byteOffset" type="long"/>
+      <param name="length" type="long"/>
+    </method>
+    <property name="length" readOnly="true" />
+    <method name="set" returnType="void">
+      <param name="array" type="$__Type__$" optional="false"/>
+      <param name="offset" type="long"/>
+    </method>
+    <method name="subarray" returnType="$__Type__$">
+      <param name="begin" type="long" optional="false"/>
+      <param name="end" type="long"/>
+    </method>
+  </class>
+
+  <class name="Map" template="K, V" extends="Iterable.&lt;Array&gt;">
+    <method name="__constructor__">
+      <param name="iterable" type="Iterable.&lt;Array&gt;" optional="true"/>
+    </method>
+    <method name="clear" returnType="void">
+    </method>
+    <method name="delete" returnType="boolean">
+      <param name="key" type="K"/>
+    </method>
+    <method name="entries" returnType="Iterator.&lt;*&gt;">
+    </method>
+    <method name="forEach" returnType="void">
+      <param name="callbackfn" type="function(V, K, Map.&lt;K, V&gt;): void"/>
+      <param name="thisArg" optional="true"/>
+    </method>
+    <method name="get" returnType="V">
+      <param name="key" type="K"/>
+    </method>
+    <method name="has" returnType="boolean">
+      <param name="key" type="K"/>
+    </method>
+    <method name="keys" returnType="Iterator.&lt;K&gt;">
+    </method>
+    <method name="set" returnType="Map.&lt;K, V&gt;">
+      <param name="key" type="K"/>
+      <param name="value" type="V"/>
+    </method>
+    <property name="size" type="number" readonly="true"/>
+    <method name="values" returnType="Iterator.&lt;V&gt;">
+    </method>
+  </class>
+
+  <class name="Set" template="T" extends="Iterable.&lt;T&gt;">
+    <method name="__constructor__">
+      <param name="iterable" type="Iterable.&lt;T&gt;" optional="true"/>
+    </method>
+    <method name="add" returnType="Set.&lt;T&gt;">
+      <param name="value" type="T"/>
+    </method>
+    <method name="clear" returnType="void">
+    </method>
+    <method name="delete" returnType="boolean">
+      <param name="value" type="T"/>
+    </method>
+    <method name="entries" returnType="Iterator.&lt;*&gt;">
+    </method>
+    <method name="forEach" returnType="void">
+      <param name="callbackfn" type="function(T, T, Set.&lt;T&gt;): void"/>
+      <param name="thisArg" optional="true"/>
+    </method>
+    <method name="has" returnType="boolean">
+      <param name="value" type="T"/>
+    </method>
+    <method name="keys" returnType="Iterator.&lt;T&gt;">
+    </method>
+    <property name="size" type="number" readonly="true"/>
+    <method name="values" returnType="Iterator.&lt;T&gt;">
+    </method>
+  </class>
+
+  <class name="WeakMap" template="K, V" extends="Iterable.&lt;Array&gt;">
+    <method name="__constructor__">
+      <param name="iterable" type="Iterable.&lt;Array&gt;" optional="true"/>
+    </method>
+    <method name="delete" returnType="boolean">
+      <param name="key" type="K"/>
+    </method>
+    <method name="get" returnType="V">
+      <param name="key" type="K"/>
+    </method>
+    <method name="has" returnType="boolean">
+      <param name="key" type="K"/>
+    </method>
+    <method name="set" returnType="Map.&lt;K, V&gt;">
+      <param name="key" type="K"/>
+      <param name="value" type="V"/>
+    </method>
+  </class>
+
+  <class name="WeakSet" template="T" extends="Iterable.&lt;T&gt;">
+    <method name="__constructor__">
+      <param name="iterable" type="Iterable.&lt;T&gt;" optional="true"/>
+    </method>
+    <method name="add" returnType="Set.&lt;T&gt;">
+      <param name="value" type="T"/>
+    </method>
+    <method name="delete" returnType="boolean">
+      <param name="value" type="T"/>
+    </method>
+    <method name="has" returnType="boolean">
+      <param name="value" type="T"/>
+    </method>
+  </class>
+
+  <class name="GeneratorFunction">
+    <method name="__constructor__">
+      <param name="parameters" rest="true"/>
+      <param name="body" type="string"/>
+    </method>
+  </class>
+
+  <class name="Generator">
+    <method name="next">
+      <param name="value"/>
+    </method>
+    <method name="return">
+      <param name="value"/>
+    </method>
+    <method name="throw">
+      <param name="exception"/>
+    </method>
+  </class>
+
+  <class name="Promise" template="T">
+    <method name="__constructor__">
+      <param name="executor"/>
+    </method>
+    <static>
+      <method name="all" returnType="Promise.&lt;*&gt;">
+        <param name="iterable" type="Iterable.&lt;Promise&gt;"/>
+      </method>
+      <method name="race" returnType="Promise.&lt;*&gt;">
+        <param name="iterable" type="Iterable.&lt;Promise&gt;"/>
+      </method>
+      <method name="reject" returnType="Promise.&lt;*&gt;">
+        <param name="r" type="*" optional="true"/>
+      </method>
+      <method name="resolve" returnType="Promise.&lt;T&gt;" template="T">
+        <param name="x" type="(T | Promise.&lt;T&gt;)" optional="true"/>
+      </method>
+    </static>
+    <method name="catch" returnType="Promise.&lt;T&gt;">
+      <param name="onRejected" type="function(*): (Promise.&lt;T&gt; | T)" optional="true"/>
+    </method>
+    <method name="then" returnType="Promise.&lt;TResult&gt;" template="TResult">
+      <param name="onFulfilled" type="function(T): (Promise.&lt;TResult&gt; | TResult)" optional="true"/>
+      <param name="onRejected" type="function(*): (Promise.&lt;TResult&gt; | TResult)" optional="true"/>
+    </method>
+  </class>
+
+  <class name="Reflect">
+    <static>
+      <method name="apply">
+        <param name="target" type="Function"/>
+        <param name="thisArgument" type="Function"/>
+        <param name="argumentsList"/>
+      </method>
+      <method name="construct">
+        <param name="target" type="Function"/>
+        <param name="argumentsList"/>
+      </method>
+      <method name="defineProperty" returnType="boolean">
+        <param name="target" type="*"/>
+        <param name="propertyKey" type="*"/>
+        <param name="attributes" type="*"/>
+      </method>
+      <method name="deleteProperty" returnType="boolean">
+        <param name="target" type="*"/>
+        <param name="propertyKey" type="*"/>
+      </method>
+      <method name="enumerate" returnType="Iterator">
+        <param name="target" type="*"/>
+      </method>
+      <method name="get">
+        <param name="target"/>
+        <param name="propertyKey"/>
+        <param name="receiver" optional="true"/>
+      </method>
+      <method name="getOwnPropertyDescriptor">
+        <param name="target"/>
+        <param name="propertyKey"/>
+      </method>
+      <method name="getPrototypeOf">
+        <param name="target"/>
+      </method>
+      <method name="has" returnType="boolean">
+        <param name="target"/>
+        <param name="propertyKey"/>
+      </method>
+      <method name="isExtensible" returnType="boolean">
+        <param name="target"/>
+      </method>
+      <method name="ownKeys" returnType="Array">
+        <param name="target"/>
+      </method>
+      <method name="preventExtensions" returnType="boolean">
+        <param name="target"/>
+      </method>
+      <method name="set" returnType="boolean">
+        <param name="target"/>
+        <param name="propertyKey"/>
+        <param name="value"/>
+        <param name="receiver" optional="true"/>
+      </method>
+      <method name="setPrototypeOf" returnType="boolean">
+        <param name="target"/>
+        <param name="proto"/>
+      </method>
+    </static>
+  </class>
+
+  <class name="Proxy">
+    <method name="__constructor__">
+      <param name="target"/>
+      <param name="handler"/>
+    </method>
+    <static>
+      <method name="revocable">
+        <param name="target"/>
+        <param name="handler"/>
+      </method>
+    </static>
+  </class>
+</Library>

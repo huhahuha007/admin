@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<idea-plugin>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="JavaScript.jsCallTemplate" interface="com.intellij.javascript.testFramework.codeInsight.JsCallTemplateContextProvider"/>
+    <extensionPoint qualifiedName="JavaScript.testFileStructureBuilderProvider" interface="com.intellij.javascript.testFramework.JsTestFileStructureBuilderProvider"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="JavaScript">
+    <frameworkIndexingHandler implementation="com.intellij.javascript.testFramework.JsTestFileIndexingHandler"/>
+    <testFileStructureBuilderProvider implementation="com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilderProvider"/>
+    <testFileStructureBuilderProvider implementation="com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilderProvider"/>
+    <jsCallTemplate implementation="com.intellij.javascript.testFramework.jasmine.codeInsight.JasmineSuiteCallTemplateContextProvider"/>
+    <jsCallTemplate implementation="com.intellij.javascript.testFramework.jasmine.codeInsight.JasmineSpecCallTemplateContextProvider"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <fileBasedIndex implementation="com.intellij.javascript.testFramework.JsTestFileByTestNameIndex"/>
+    <gotoSymbolContributor implementation="com.intellij.javascript.testFramework.navigation.JsTestNameGoToSymbolProvider"/>
+    <!--<completion.contributor order="first" language="JavaScript" implementationClass="com.intellij.javascript.testFramework.codeInsight.FilteringCompletionContributor"/>-->
+    <runLineMarkerContributor language="JavaScript" implementationClass="com.intellij.javascript.testing.JSTestRunLineMarkersProvider"/>
+    <testFinder implementation="com.intellij.javascript.testFramework.JsTestFinder"/>
+  </extensions>
+
+  <actions>
+    <group id="JsTestFrameworkCodeGeneratorGroup">
+      <action id="JasmineGenerateNewSuiteAction" text="Jasmine Suite"
+              class="com.intellij.javascript.testFramework.jasmine.codeInsight.JasmineGenerateNewSuiteAction"/>
+      <action id="JasmineGenerateNewSpecAction" text="Jasmine Spec"
+              class="com.intellij.javascript.testFramework.jasmine.codeInsight.JasmineGenerateNewSpecAction"/>
+      <action id="JasmineGenerateBeforeEachMethodAction" text="Jasmine beforeEach"
+              class="com.intellij.javascript.testFramework.jasmine.codeInsight.JasmineGenerateBeforeEachMethodAction"/>
+      <action id="JasmineGenerateAfterEachMethodAction" text="Jasmine afterEach"
+              class="com.intellij.javascript.testFramework.jasmine.codeInsight.JasmineGenerateAfterEachMethodAction"/>
+      <separator/>
+      <action id="QUnitGenerateNewTestAction" text="QUnit Test"
+              class="com.intellij.javascript.testFramework.qunit.codeInsight.QUnitGenerateNewTestAction"/>
+      <action id="QUnitGenerateSetupAction" text="QUnit Setup"
+              class="com.intellij.javascript.testFramework.qunit.codeInsight.QUnitGenerateSetupAction"/>
+      <action id="QUnitGenerateTearDownAction" text="QUnit TearDown"
+              class="com.intellij.javascript.testFramework.qunit.codeInsight.QUnitGenerateTearDownAction"/>
+      <separator/>
+      <add-to-group group-id="GenerateGroup" anchor="first"/>
+    </group>
+  </actions>
+
+</idea-plugin>

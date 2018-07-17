@@ -1,0 +1,3 @@
+let arg = ["string1", "string2"];
+
+<spot>arg</spot>$key

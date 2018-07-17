@@ -1,0 +1,6 @@
+function m(arg) {
+    var type = typeof arg
+    if (type == 'number') {
+
+    }
+}

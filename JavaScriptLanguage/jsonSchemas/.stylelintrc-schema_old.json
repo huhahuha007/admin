@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "id": "https://jetbrains.com/stylelintrc.json",
+  "title": "JSON schema for Stylint (CSS linter) configuration files",
+  "description": "Stylelint, CSS linter",
+  "properties": {
+    "color-hex-case": {
+      "type": "string",
+      "description": "Specify lowercase or uppercase for hex colors.",
+      "enum": [
+        "lower",
+        "upper"
+      ]
+    },
+    "color-hex-length": {
+      "type": "string",
+      "description": "Specify short or long notation for hex colors",
+      "enum": [
+        "short",
+        "long"
+      ]
+    },
+    "color-named": {
+      "type": "string",
+      "description": "Require (where possible) or disallow named colors",
+      "enum": [
+        "always-where-possible",
+        "never"
+      ]
+    },
+    "color-no-hex": {
+      "type": "boolean",
+      "description": "Disallow hex colors"
+    },
+    "color-no-invalid-hex": {
+      "type": "boolean",
+      "description": "Disallow invalid hex colors"
+    },
+  }
+}

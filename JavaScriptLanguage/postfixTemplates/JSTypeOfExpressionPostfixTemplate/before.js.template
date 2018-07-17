@@ -1,0 +1,6 @@
+function m(arg) {
+    var type = <spot>arg</spot>$key
+    if (type == 'number') {
+
+    }
+}

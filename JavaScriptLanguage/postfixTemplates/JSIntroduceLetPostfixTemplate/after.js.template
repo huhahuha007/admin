@@ -1,0 +1,3 @@
+function m(id) {
+    let el = document.getElementById(id);
+}

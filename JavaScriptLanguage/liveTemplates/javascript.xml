@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templateSet group="JavaScript">
+
+  <template name="us" value='"use strict";&#10;$END$'
+            resource-bundle="messages.JavaScriptBundle" key="livetemplate.description.us" toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="JS_STATEMENT" value="true" />
+    </context>
+  </template>
+
+  <template name="ref" value='///&lt;reference path="$PATH$"/&gt;&#10;$END$'
+            resource-bundle="messages.JavaScriptBundle" key="livetemplate.description.ref" toReformat="true">
+    <variable alwaysStopAt='true' defaultValue='&quot;&quot;' expression='complete()' name='PATH'/>
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+
+  <template name="defn" value='define([&quot;$MODULE_REF$&quot;], function($MODULE_VAR$) {&#10;$END$&#10;});'
+            resource-bundle="messages.JavaScriptBundle" key="livetemplate.description.defi" toReformat="true" toShortenFQNames="true">
+    <variable alwaysStopAt='true' defaultValue='&quot;&quot;' expression='complete()' name='MODULE_REF'/>
+    <variable alwaysStopAt='true' defaultValue='mod' expression='jsDefineParameter(MODULE_REF)' name='MODULE_VAR'/>
+    <context>
+      <option name="JS_STATEMENT" value="true"/>
+    </context>
+  </template>
+
+  <template name="flow" value='// @flow'
+            resource-bundle="messages.JavaScriptBundle" key="livetemplate.description.flow" toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="JS_STATEMENT" value="true"/>
+    </context>
+  </template>
+
+</templateSet>

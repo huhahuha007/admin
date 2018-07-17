@@ -1,0 +1,4 @@
+function m(id) {
+    var el = document.getElementById(id);
+    console.log('element: ' + el);
+}

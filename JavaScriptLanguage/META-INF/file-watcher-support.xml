@@ -1,0 +1,22 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij.plugins.watcher">
+    <consumer implementation="com.intellij.lang.javascript.watcher.JavaScriptYUICompressorTaskConsumer"/>
+    <consumer implementation="com.intellij.lang.javascript.watcher.JavaScriptClosureCompressorTaskConsumer"/>
+    <consumer implementation="com.intellij.lang.javascript.watcher.UglifyJSTaskConsumer"/>
+    <consumer implementation="com.intellij.lang.javascript.watcher.ES6To5TaskConsumer"/>
+
+    <dependency.finder implementation="com.intellij.lang.javascript.watcher.JavaScriptDependencyFinder"/>
+
+    <output.handler implementation="com.intellij.lang.javascript.watcher.JSOutputFilesHandler"/>
+    <suppressor implementation="com.intellij.lang.javascript.buildTools.JsBuildToolTaskSuppressor"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <editorNotificationProvider  implementation="com.intellij.lang.javascript.watcher.TypeScriptCompilerFwEditorNotificationProvider"/>
+  </extensions>
+  <extensions defaultExtensionNs="JavaScript">
+    <TypeScriptAnnotatorCheckerProvider
+        order="last"
+        implementation="com.intellij.lang.javascript.watcher.TypeScriptFileWatcherAnnotatorCheckerProvider"/>
+  </extensions>
+</idea-plugin>

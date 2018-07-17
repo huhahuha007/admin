@@ -1,0 +1,5 @@
+let arg = ["string1", "string2"];
+
+for (let obj of arg) {
+
+}

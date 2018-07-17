@@ -1,0 +1,2043 @@
+<?xml version="1.0" encoding="utf-8"?>
+<idea-plugin>
+  <name>JavaScript Support</name>
+  <id>JavaScript</id>
+  <version>1.0</version>
+  <category>HTML/JavaScript Development</category>
+  <vendor>JetBrains</vendor>
+  <resource-bundle>messages.JavaScriptBundle</resource-bundle>
+  <depends>com.intellij.css</depends>
+  <depends optional="true" config-file="file-watcher-support.xml">com.intellij.plugins.watcher</depends>
+  <!--suppress PluginXmlValidity -->
+  <depends optional="true" config-file="intellilang-js-support.xml">org.intellij.intelliLang</depends>
+  <!--suppress PluginXmlValidity -->
+  <depends optional="true" config-file="js-nashorn-support.xml">com.intellij.modules.java</depends>
+  <depends optional="true" config-file="js-copyright.xml">com.intellij.copyright</depends>
+  <depends>com.intellij.modules.xml</depends>
+  <depends>com.intellij.modules.ultimate</depends>
+  <depends config-file="js-diagrams.xml" optional="true">com.intellij.diagram</depends>
+  <description>
+    <![CDATA[
+      This plugin supports JavaScript, ActionScript and TypeScript languages.
+      The following features are supported:
+        <ul>
+        <li>Dedicated file types.</li>
+        <li>Syntax and error highlighting.</li>
+        <li>Inspections, intention actions and quick fixes.</li>
+        <li>Dedicated pages under the Code Style node of the Settings/Preferences dialog.</li>
+        <li>Code folding and formatting.</li>
+        <li>Navigation and search.</li>
+        <li>JavaScript-specific refactorings.</li>
+        </ul>
+      ]]>
+  </description>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="./js-test-common-plugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="./js-build-tools-plugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="./js-css.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="./protractor.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="./jest.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <psi.treeChangePreprocessor implementation="com.intellij.lang.javascript.index.JavaScriptPsiTreeChangePreprocessor"/>
+    <codeInsight.template.postfixTemplateProvider language="JavaScript"
+                                                  implementationClass="com.intellij.lang.javascript.template.postfix.JSPostfixTemplateProvider"/>
+
+    <codeInsight.overrideMethod language="JavaScript"
+                                implementationClass="com.intellij.lang.javascript.generation.JavaScriptOverrideMethodsHandler"/>
+    <codeInsight.implementMethod language="JavaScript"
+                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandler"/>
+
+    <colorSettingsPage implementation="com.intellij.lang.javascript.highlighting.JavaScriptColorsAndFontsPage"/>
+    <gotoSymbolContributor implementation="com.intellij.lang.javascript.navigation.JavaScriptSymbolContributor"/>
+    <gotoClassContributor implementation="com.intellij.lang.javascript.navigation.JavaScriptClassContributor"/>
+
+    <fileTypeFactory implementation="com.intellij.lang.javascript.JSFileTypeFactory"/>
+    <syntaxHighlighter key="JavaScript" factoryClass="com.intellij.lang.javascript.highlighting.JSSyntaxHighlighterProvider"/>
+    <lang.syntaxHighlighterFactory language="JavaScript"
+                                   implementationClass="com.intellij.lang.javascript.JSSyntaxHighlighterFactory"/>
+    <lang.syntaxHighlighterFactory language="ECMA Script Level 4"
+                                   implementationClass="com.intellij.lang.javascript.dialects.ECMAL4SyntaxHighlighterFactory"/>
+    <lang.syntaxHighlighterFactory language="GWT JavaScript"
+                                   implementationClass="com.intellij.lang.javascript.dialects.GwtSyntaxHighlighterFactory"/>
+    <lang.syntaxHighlighterFactory language="TypeScript"
+                                   implementationClass="com.intellij.lang.javascript.dialects.TypeScriptSyntaxHighlighterFactory"/>
+    <lang.syntaxHighlighterFactory language="TypeScript JSX"
+                                   implementationClass="com.intellij.lang.javascript.dialects.TypeScriptJSXSyntaxHighlighterFactory"/>
+    <lang.syntaxHighlighterFactory language="Apple JS"
+                                   implementationClass="com.intellij.lang.javascript.dialects.AppleJSSyntaxHighlighterFactory"/>
+
+    <additionalTextAttributes scheme="Default" file="colorSchemes/Default.xml"/>
+
+    <filePropertyPusher implementation="com.intellij.lang.javascript.dialects.JSLanguageLevelPusher"/>
+
+    <lang.parserDefinition language="JavaScript" implementationClass="com.intellij.lang.javascript.JavascriptParserDefinition"/>
+    <lang.parserDefinition language="GWT JavaScript" implementationClass="com.intellij.lang.javascript.dialects.GwtParserDefinition"/>
+    <lang.parserDefinition language="ECMA Script Level 4"
+                           implementationClass="com.intellij.lang.javascript.dialects.ECMAL4ParserDefinition"/>
+    <lang.parserDefinition language="Apple JS" implementationClass="com.intellij.lang.javascript.dialects.AppleJSParserDefinition"/>
+    <lang.parserDefinition language="ECMAScript 6" implementationClass="com.intellij.lang.javascript.dialects.ECMA6ParserDefinition"/>
+    <lang.parserDefinition language="JSX Harmony" implementationClass="com.intellij.lang.jsx.JSXHarmonyParserDefinition"/>
+    <lang.parserDefinition language="JavaScript 1.5" implementationClass="com.intellij.lang.javascript.dialects.JS15ParserDefinition"/>
+    <lang.parserDefinition language="JavaScript 1.6" implementationClass="com.intellij.lang.javascript.dialects.JS16ParserDefinition"/>
+    <lang.parserDefinition language="JavaScript 1.7" implementationClass="com.intellij.lang.javascript.dialects.JS17ParserDefinition"/>
+    <lang.parserDefinition language="JavaScript 1.8" implementationClass="com.intellij.lang.javascript.dialects.JS18ParserDefinition"/>
+    <lang.parserDefinition language="TypeScript" implementationClass="com.intellij.lang.javascript.dialects.TypeScriptParserDefinition"/>
+    <lang.parserDefinition language="TypeScript JSX" implementationClass="com.intellij.lang.javascript.dialects.TypeScriptJSXParserDefinition"/>
+    <lang.parserDefinition language="Nashorn JS" implementationClass="com.intellij.lang.javascript.nashorn.NashornJSParserDefinition"/>
+    <lang.parserDefinition language="Flow JS" implementationClass="com.intellij.lang.javascript.dialects.FlowJSParserDefinition"/>
+
+    <fileBasedIndex implementation="com.intellij.lang.javascript.index.JSPackageIndex"/>
+    <fileBasedIndex implementation="com.intellij.lang.javascript.index.JSCustomSingleEntriesIndex"/>
+    <fileBasedIndex implementation="com.intellij.lang.javascript.index.JSImplicitElementsIndex"/>
+
+    <include.provider implementation="com.intellij.lang.javascript.index.TypeScriptFileIncludeProvider"/>
+    <include.provider implementation="com.intellij.lang.javascript.frameworks.amd.JSAmdFileIncludeProvider"/>
+    <include.provider implementation="com.intellij.lang.ecmascript6.index.ES6FileIncludeProvider"/>
+
+    <todoIndexer filetype="JavaScript" implementationClass="com.intellij.lang.javascript.index.JSTodoIndexer"/>
+    <todoIndexer filetype="TypeScript" implementationClass="com.intellij.lang.javascript.index.TypeScriptTodoIndexer"/>
+    <indexPatternBuilder implementation="com.intellij.lang.javascript.index.JSIndexPatternBuilder"/>
+    <commentTokenSetProvider language="JavaScript" implementationClass="com.intellij.lang.javascript.index.JSCommentTokenSetProvider"/>
+    <liveTemplateSubstitutor implementation="com.intellij.lang.javascript.generation.JSTemplateSubstitutor"/>
+
+    <internalFileTemplate name="JavaScript File"/>
+    <internalFileTemplate name="AMD JavaScript File"/>
+    <internalFileTemplate name="TypeScript File"/>
+    <internalFileTemplate name="tsconfig.json"/>
+
+    <annotator language="JavaScript" implementationClass="com.intellij.lang.javascript.validation.JSAnnotator"/>
+
+    <readWriteAccessDetector implementation="com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector"/>
+    <lang.refactoringSupport language="JavaScript"
+                             implementationClass="com.intellij.lang.javascript.refactoring.JavascriptRefactoringSupportProvider"
+                             id="JavascriptRefactoringSupportProvider"/>
+    <lang.refactoringSupport language="TypeScript"
+                             implementationClass="com.intellij.lang.typescript.refactoring.TypeScriptRefactoringSupportProvider"
+                             id="TypeScriptRefactoringSupportProvider"/>
+    <refactoring.moveHandler implementation="com.intellij.lang.javascript.refactoring.moveMembers.JSMoveMembersHandler"/>
+    <elementDescriptionProvider implementation="com.intellij.lang.javascript.refactoring.JSRefactoringElementDescriptionProvider"/>
+    <elementDescriptionProvider implementation="com.intellij.lang.javascript.findUsages.JavaScriptUsageViewDescriptionProvider"/>
+    <lang.refactoringSupport.classMembersRefactoringSupport language="JavaScript"
+                                                            implementationClass="com.intellij.lang.javascript.refactoring.JSClassMembersRefactoringSupport"/>
+
+    <lang.formatter language="JavaScript" implementationClass="com.intellij.lang.javascript.formatter.JavascriptFormattingModelBuilder"/>
+    <lang.formatter language="TypeScript" implementationClass="com.intellij.lang.typescript.formatter.TypeScriptFormattingModelBuilder"/>
+    <lang.lineWrapStrategy language="JavaScript" implementationClass="com.intellij.lang.javascript.formatter.JSLineWrapPositionStrategy"/>
+    <lang.whiteSpaceFormattingStrategy language="JavaScript"
+                                       implementationClass="com.intellij.lang.javascript.formatter.JSWhiteSpaceDefinitionStrategy"/>
+
+    <lang.documentationProvider language="JavaScript"
+                                implementationClass="com.intellij.lang.javascript.documentation.JSDocumentationProvider"/>
+    <lang.documentationFixer language="JavaScript" implementationClass="com.intellij.lang.javascript.documentation.JSDocCommentFixer"/>
+    <lang.documentationProvider language="JavaScript" implementationClass="com.intellij.lang.javascript.frameworks.react.ReactTagDocumentationProvider" order="last"/>
+    <refactoring.safeDeleteProcessor implementation="com.intellij.lang.javascript.refactoring.JavaScriptSafeDeleteProcessor"/>
+
+    <lang.namesValidator language="GWT JavaScript" implementationClass="com.intellij.lang.javascript.refactoring.GwtNamesValidator"/>
+    <lang.namesValidator language="ECMA Script Level 4"
+                         implementationClass="com.intellij.lang.javascript.refactoring.ECMAL4NamesValidator"/>
+    <lang.namesValidator language="JavaScript"
+                         implementationClass="com.intellij.lang.javascript.refactoring.BasicJavascriptNamesValidator"/>
+    <nameSuggestionProvider implementation="com.intellij.lang.javascript.refactoring.JSSuggestionProvider" id="js"/>
+
+    <lang.surroundDescriptor language="JavaScript"
+                             implementationClass="com.intellij.lang.javascript.surroundWith.JSExpressionSurroundDescriptor"/>
+    <lang.surroundDescriptor language="JavaScript"
+                             implementationClass="com.intellij.lang.javascript.surroundWith.JSStatementsSurroundDescriptor"/>
+    <lang.surroundDescriptor language="JavaScript"
+                             implementationClass="com.intellij.lang.javascript.surroundWith.JSPropertiesSurroundDescriptor"/>
+
+    <codeInsight.gotoSuper language="JavaScript" implementationClass="com.intellij.lang.javascript.navigation.JavaScriptGotoSuperHandler"/>
+    <lang.findUsagesProvider language="JavaScript"
+                             implementationClass="com.intellij.lang.javascript.findUsages.JavaScriptFindUsagesProvider"/>
+    <lang.findUsagesProvider language="ECMA Script Level 4"
+                             implementationClass="com.intellij.lang.javascript.findUsages.ActionScriptFindUsagesProvider"/>
+    <findUsagesHandlerFactory id="JavaScript" implementation="com.intellij.lang.javascript.findUsages.JavaScriptFindUsagesHandlerFactory"/>
+    <referencesSearch implementation="com.intellij.lang.ecmascript6.findUsages.ES6ExportDefaultReferenceSearcher"/>
+    <referencesSearch implementation="com.intellij.lang.typescript.findUsages.TypeScriptDefinitionFileReferenceSearcher"/>
+    <referencesSearch implementation="com.intellij.javascript.nodejs.reference.RequiredFileSearcher"/>
+
+    <smartPointer.anchorProvider implementation="com.intellij.javascript.JavaScriptAnchorProvider" />
+    <lang.commenter language="JavaScript" implementationClass="com.intellij.lang.javascript.editing.JavascriptCommenter"/>
+    <multiLangCommenter implementation="com.intellij.lang.javascript.frameworks.react.JSXCommentProvider"/>
+
+    <lang.braceMatcher language="JavaScript" implementationClass="com.intellij.lang.javascript.highlighting.JSBraceMatcher"/>
+
+    <applicationService serviceInterface="com.intellij.lang.javascript.highlighting.JSFixFactory"
+                        serviceImplementation="com.intellij.lang.javascript.highlighting.JSFixFactoryImpl"/>
+    <projectService serviceInterface="com.intellij.lang.javascript.findUsages.JavaScriptFindUsagesConfiguration"
+                    serviceImplementation="com.intellij.lang.javascript.findUsages.JavaScriptFindUsagesConfiguration"/>
+    <postStartupActivity implementation="com.intellij.lang.javascript.inspections.JSUnusedDeclarationsStartupActivity"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.inspections.UnusedDeclarationsReferencesCacheCleaner"/>
+    <projectService serviceInterface="com.intellij.lang.javascript.inspections.JSUnusedGlobalDeclarationsCache"
+        serviceImplementation="com.intellij.lang.javascript.inspections.JSUnusedGlobalDeclarationsWorker"/>
+    <lang.foldingBuilder language="JavaScript" implementationClass="com.intellij.lang.javascript.folding.JavaScriptFoldingBuilder"/>
+    <lang.foldingBuilder language="TypeScript" implementationClass="com.intellij.lang.javascript.folding.TypeScriptFoldingBuilder"/>
+    <lang.foldingBuilder language="TypeScript JSX" implementationClass="com.intellij.lang.javascript.folding.TypeScriptFoldingBuilder"/>
+    <codeFoldingOptionsProvider instance="com.intellij.lang.javascript.folding.JSCodeFoldingOptionsProvider"/>
+    <applicationService serviceInterface="com.intellij.lang.javascript.folding.JSCodeFoldingSettings"
+                        serviceImplementation="com.intellij.lang.javascript.folding.JSCodeFoldingSettingsImpl"/>
+    <applicationService serviceInterface="com.intellij.lang.javascript.scratch.JSScratchFileInfoProvider"
+                        serviceImplementation="com.intellij.lang.javascript.scratch.JSScratchFileInfoProviderImpl"/>
+
+    <!-- TypeScript Compiler -->
+    <projectService serviceInterface="com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl"
+                    serviceImplementation="com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl"/>
+
+    <projectService serviceInterface="com.intellij.lang.typescript.compiler.TypeScriptToolWindowProvider"
+                    serviceImplementation="com.intellij.lang.typescript.compiler.TypeScriptToolWindowProvider"/>
+
+    <projectService serviceInterface="com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceEvents"
+                    serviceImplementation="com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceEvents"/>
+
+    <projectService serviceInterface="com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings"
+                    serviceImplementation="com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings"/>
+
+    <projectService serviceInterface="com.intellij.lang.javascript.index.TypeScriptImportPathsResolver"
+                    serviceImplementation="com.intellij.lang.javascript.index.TypeScriptImportPathsResolver"/>
+
+    <projectConfigurable groupId="language"
+                         instance="com.intellij.lang.typescript.compiler.ui.TypeScriptConfigurable"
+                         id="settings.typescriptcompiler"
+                         displayName="TypeScript"/>
+    <stepsBeforeRunProvider implementation="com.intellij.lang.typescript.compiler.action.before.TypeScriptCompileBeforeRunTaskProvider"/>
+    <postStartupActivity implementation="com.intellij.lang.typescript.compiler.TypeScriptCompileStartupActivity"/>
+    <postStartupActivity implementation="com.intellij.lang.javascript.service.ide.JSLanguageServiceStartupActivity"/>
+    <editorNotificationProvider  implementation="com.intellij.lang.typescript.compiler.ui.TypeScriptCompilerEditorNotificationProvider"/>
+    <moveFileHandler implementation="com.intellij.lang.typescript.refactoring.TypeScriptMoveFileHandler"/>
+    <lang.psiStructureViewFactory language="JavaScript"
+                                  implementationClass="com.intellij.lang.javascript.structureView.JSStructureViewBuilderFactory"/>
+    <lang.psiStructureViewFactory language="TypeScript"
+                                  implementationClass="com.intellij.lang.typescript.structureView.TypeScriptStructureViewBuilderFactory"/>
+
+    <projectViewNestingRulesProvider implementation="com.intellij.lang.javascript.projectView.JSNestingRulesProvider"/>
+
+    <!-- TypeScript Config -->
+    <projectService serviceInterface="com.intellij.lang.typescript.tsconfig.TypeScriptConfigService"
+                    serviceImplementation="com.intellij.lang.typescript.tsconfig.TypeScriptConfigServiceImpl"/>
+
+    <projectService serviceInterface="com.intellij.lang.typescript.TypeScriptSettings"
+                    serviceImplementation="com.intellij.lang.typescript.TypeScriptSettings"/>
+    <projectService serviceInterface="com.intellij.lang.typescript.tsconfig.TypeScriptConfigLibraryUpdater"
+                    serviceImplementation="com.intellij.lang.typescript.tsconfig.TypeScriptConfigLibraryUpdater"/>
+
+    <codeInsight.parameterInfo language="TypeScript" implementationClass="com.intellij.lang.typescript.TypeScriptParameterInfoHandler"/>
+    <codeInsight.parameterInfo language="JavaScript" implementationClass="com.intellij.javascript.JSParameterInfoHandler"/>
+    <codeInsight.parameterInfo language="JavaScript" implementationClass="com.intellij.javascript.JSAnnotationParameterInfoHandler"/>
+    <codeInsight.fillParagraph language="JavaScript" implementationClass="com.intellij.javascript.JSFillParagraphHandler"/>
+    <fileStructureGroupRuleProvider implementation="com.intellij.lang.javascript.findUsages.JavaScriptClassGroupRuleProvider"/>
+    <fileStructureGroupRuleProvider implementation="com.intellij.lang.javascript.findUsages.JavaScriptFunctionGroupRuleProvider"/>
+    <highlightErrorFilter implementation="com.intellij.lang.javascript.JsErrorFilter"/>
+    
+    <stripTrailingSpacesFilterFactory implementation="com.intellij.lang.javascript.editing.JSStripTrailingSpacesFilterFactory"/>
+
+    <stubIndex implementation="com.intellij.lang.javascript.psi.stubs.JSNameIndex"/>
+    <stubIndex implementation="com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex"/>
+    <stubIndex implementation="com.intellij.lang.javascript.psi.stubs.JSGlobalQualifiedElementIndex"/>
+    <stubIndex implementation="com.intellij.lang.javascript.psi.stubs.TypeScriptExternalModuleIndex"/>
+    <stubIndex implementation="com.intellij.lang.javascript.psi.stubs.JSSuperClassIndex"/>
+    <stubIndex implementation="com.intellij.lang.javascript.psi.stubs.JSImplementedInterfacesIndex"/>
+    <stubIndex implementation="com.intellij.lang.javascript.psi.stubs.JSCustomStringIndex"/>
+    <stubIndex implementation="com.intellij.lang.javascript.psi.stubs.JSSymbolIndex2"/>
+    <stubIndex implementation="com.intellij.lang.javascript.psi.stubs.JSTypedefIndex"/>
+    <stubIndex implementation="com.intellij.lang.javascript.psi.stubs.JSGenericsIndex"/>
+    <stubIndex implementation="com.intellij.lang.javascript.psi.stubs.JSBaseTypesIndex"/>
+    <stubIndex implementation="com.intellij.lang.javascript.psi.stubs.JSClassIndex"/>
+    <stubIndex implementation="com.intellij.lang.javascript.psi.stubs.JSNamespaceMembersIndex"/>
+    <stubIndex implementation="com.intellij.lang.javascript.psi.stubs.JSNamespaceIncludingLocalMembersIndex"/>
+    <stubIndex implementation="com.intellij.lang.javascript.psi.stubs.JSSubclassIndex"/>
+    <stubIndex implementation="com.intellij.lang.javascript.psi.stubs.JSSymbolQualifiedNamesIndex"/>
+    <stubIndex implementation="com.intellij.lang.javascript.frameworks.amd.JSAmdBaseUrlIndex"/>
+    <stubIndex implementation="com.intellij.lang.javascript.frameworks.amd.JSAmdRequirePathIndex"/>
+    <stubIndex implementation="com.intellij.lang.javascript.psi.stubs.JSGlobalSymbolIndex"/>
+    <stubIndex implementation="com.intellij.lang.javascript.psi.stubs.JSExportedMembersIndex"/>
+    <stubIndex implementation="com.intellij.lang.javascript.psi.stubs.JSNonGlobalSymbolIndex"/>
+
+    <codeStyleSettingsProvider implementation="com.intellij.lang.javascript.formatter.JSCodeStyleSettingsProvider"/>
+    <codeStyleSettingsProvider implementation="com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettingsProvider"/>
+    <liveTemplateContext implementation="com.intellij.lang.javascript.JavaScriptCodeContextType"/>
+    <liveTemplateContext implementation="com.intellij.lang.javascript.JSExpressionContextType"/>
+    <liveTemplateContext implementation="com.intellij.lang.javascript.frameworks.react.JSXHtmlContextType"/>
+    <liveTemplateContext implementation="com.intellij.lang.javascript.JSStatementContextType"/>
+    <defaultLiveTemplatesProvider implementation="com.intellij.lang.javascript.JSDefaultLiveTemplateProvider"/>
+
+    <codeInsight.lineMarkerProvider language="JavaScript"
+                                    implementationClass="com.intellij.lang.javascript.highlighting.JavaScriptLineMarkerProvider"/>
+    <codeInsight.typeInfo language="JavaScript" implementationClass="com.intellij.lang.javascript.actions.JSShowTypeInfoAction"/>
+
+    <typeDeclarationProvider implementation="com.intellij.lang.javascript.navigation.JavaScriptTypeDeclarationProvider"/>
+    <gotoTargetRendererProvider implementation="com.intellij.lang.javascript.search.JSGotoTargetRendererProvider"/>
+    <definitionsSearch implementation="com.intellij.lang.javascript.search.JSDefinitionsSearchExecutor"/>
+    <declarationRangeHandler key="com.intellij.lang.javascript.psi.JSNamedElement"
+                             implementationClass="com.intellij.lang.javascript.search.JSDeclarationRangeHandler"/>
+    <multiHostInjector implementation="com.intellij.lang.javascript.JSLanguageInjector"/>
+    <multiHostInjector implementation="com.intellij.lang.javascript.frameworks.mozilla.XulLanguageInjector"/>
+    <multiHostInjector implementation="com.intellij.lang.javascript.frameworks.dojo.DojoLanguageInjector"/>
+    <multiHostInjector implementation="com.intellij.lang.javascript.frameworks.bindows.BindowsLanguageInjector"/>
+    <stubElementTypeHolder class="com.intellij.lang.javascript.JSElementTypes"/>
+    <stubElementTypeHolder class="com.intellij.lang.typescript.TypeScriptElementTypes"/>
+    <stubElementTypeHolder class="com.intellij.lang.javascript.frameworks.jquery.JQueryCssFileImpl"/>
+    <stubElementTypeHolder class="com.intellij.lang.actionscript.ActionScriptElementTypes"/>
+    <stubElementTypeHolder class="com.intellij.lang.javascript.psi.impl.JSExpressionCodeFragmentElementType" order="last"/>
+    <lang.importOptimizer language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer"/>
+    <lang.importOptimizer language="Mxml" implementationClass="com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer"/>
+    <lang.smartEnterProcessor language="JavaScript" implementationClass="com.intellij.lang.javascript.editing.JSSmartEnterProcessor"/>
+    <lang.smartEnterProcessor language="ECMA Script Level 4"
+                              implementationClass="com.intellij.lang.javascript.editing.JSSmartEnterProcessor"/>
+    <problemFileHighlightFilter implementation="com.intellij.lang.javascript.highlighting.JSProblemFileHighlightFilter"/>
+    <renamePsiElementProcessor implementation="com.intellij.lang.javascript.refactoring.JSConstructorRenameProcessor"/>
+    <renamePsiElementProcessor implementation="com.intellij.lang.javascript.refactoring.JSPropertyFunctionRenameProcessor" order="after memberRenamer"/>
+    <renamePsiElementProcessor implementation="com.intellij.lang.javascript.refactoring.JSMemberRenameProcessor" id="memberRenamer"/>
+    <renamePsiElementProcessor implementation="com.intellij.lang.javascript.refactoring.JSDefaultRenameProcessor" order="last"/>
+    <renameHandler implementation="com.intellij.lang.javascript.refactoring.JSRenameWrongRefHandler"/>
+    <renameHandler implementation="com.intellij.lang.javascript.refactoring.JSInplaceRenameHandler"/>
+    <renameHandler implementation="com.intellij.lang.typescript.refactoring.TypeScriptMemberInplaceRenameHandler"/>
+    <renameInputValidator implementation="com.intellij.lang.javascript.refactoring.JSPropertyRenameInputValidator"/>
+    <renameInputValidator implementation="com.intellij.lang.javascript.refactoring.JSIndexedPropertyRenameInputValidator"/>
+
+    <statementUpDownMover implementation="com.intellij.lang.javascript.editing.JSStatementUpDownMover" id="js"
+                          order="before xml after statement"/>
+    <lang.implementationTextSelectioner language="JavaScript"
+                                        implementationClass="com.intellij.javascript.JSImplementationTextSelectioner"/>
+    <lang.elementManipulator forClass="com.intellij.lang.javascript.psi.ecmal4.impl.JSIncludeDirectiveImpl"
+                             implementationClass="com.intellij.lang.javascript.psi.manipulators.JSIncludeDirectiveManipulator"/>
+    <lang.elementManipulator forClass="com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair"
+                             implementationClass="com.intellij.lang.javascript.psi.manipulators.JSAttributeNameValuePairManipulator"/>
+    <lang.elementManipulator forClass="com.intellij.lang.javascript.psi.jsdoc.JSDocTag"
+                             implementationClass="com.intellij.lang.javascript.psi.manipulators.JSDocTagManipulator"/>
+    <lang.elementManipulator forClass="com.intellij.lang.javascript.psi.JSLiteralExpression"
+                             implementationClass="com.intellij.lang.javascript.psi.manipulators.JSLiteralManipulator"/>
+    <lang.elementManipulator forClass="com.intellij.lang.javascript.psi.jsdoc.JSDocTagValue"
+                             implementationClass="com.intellij.lang.javascript.psi.manipulators.JSDocTagValueManipulator"/>
+    <lang.elementManipulator forClass="com.intellij.lang.javascript.psi.jsdoc.JSDocTagNamepath"
+                             implementationClass="com.intellij.lang.javascript.psi.manipulators.JSDocTagNamepathManipulator"/>
+    <lang.elementManipulator forClass="com.intellij.lang.javascript.psi.jsdoc.JSDocComment" order="first"
+                             implementationClass="com.intellij.lang.javascript.psi.manipulators.JSDocCommentManipulator"/>
+    <lang.elementManipulator forClass="com.intellij.lang.ecmascript6.psi.ES6FromClause"
+                             implementationClass="com.intellij.lang.ecmascript6.psi.manipulators.ES6FromClauseManipulator"/>
+    <lang.elementManipulator forClass="com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration"
+                             implementationClass="com.intellij.lang.ecmascript6.psi.manipulators.ES6ImportDeclarationManipulator"/>
+    <lang.elementManipulator forClass="com.intellij.lang.typescript.psi.impl.TypeScriptExternalModuleReferenceImpl"
+                             implementationClass="com.intellij.lang.javascript.psi.manipulators.TypeScriptDirectiveManipulator"/>
+
+    <completion.contributor language="JavaScript" implementationClass="com.intellij.lang.javascript.completion.JSCompletionContributor"
+                            id="JSCompletionContributor"/>
+    <completion.contributor language="Flow JS" implementationClass="com.intellij.javascript.flow.FlowJSCompletionContributor"
+                            order="before JSCompletionContributor"/>
+    <completion.contributor language="TypeScript" implementationClass="com.intellij.lang.typescript.compiler.languageService.ide.TypeScriptLanguageServiceCompletionContributor"
+                            order="before JSCompletionContributor"/>
+    <completion.contributor language="any" implementationClass="com.intellij.lang.javascript.completion.JSReferenceCompletionContributor"
+                            id="JSReferenceCompletionContributor"
+                            order="after JSCompletionContributor"/>
+    <completion.contributor language="TypeScript"
+                            order="after JSReferenceCompletionContributor"
+                            implementationClass="com.intellij.lang.typescript.completion.TypeScriptExternalModuleCompletionContributor"/>
+    <completion.contributor language="JavaScript"
+                            id="JSPatternBasedCompletionContributor"
+                            implementationClass="com.intellij.lang.javascript.completion.JSPatternBasedCompletionContributor"/>
+    <completion.contributor language="JavaScript"
+                            id="JSFunctionCompletionContributor"
+                            implementationClass="com.intellij.lang.javascript.completion.JSFunctionCompletionContributor"/>
+
+    <resolveScopeProvider implementation="com.intellij.lang.javascript.psi.resolve.JavaScriptResolveScopeProvider"/>
+    <resolveScopeProvider implementation="com.intellij.lang.javascript.ecmascript6.TypeScriptResolveScopeProvider"/>
+
+    <liveTemplateMacro implementation="com.intellij.lang.javascript.macro.JSClassNameMacro"/>
+    <liveTemplateMacro implementation="com.intellij.lang.javascript.macro.JSQualifiedClassNameMacro"/>
+    <liveTemplateMacro implementation="com.intellij.lang.javascript.macro.JSMethodNameMacro"/>
+    <liveTemplateMacro implementation="com.intellij.lang.javascript.macro.JSSuggestVariableNameMacro"/>
+    <liveTemplateMacro implementation="com.intellij.lang.javascript.macro.JSSuggestIndexNameMacro"/>
+    <liveTemplateMacro implementation="com.intellij.lang.javascript.macro.JSComponentTypeOfMacro"/>
+    <liveTemplateMacro implementation="com.intellij.lang.javascript.macro.JSArrayVariableMacro"/>
+    <liveTemplateMacro implementation="com.intellij.lang.javascript.macro.DefineJSParameterMacro"/>
+
+    <targetElementEvaluator language="JavaScript" implementationClass="com.intellij.lang.javascript.JSTargetElementEvaluator"/>
+    <gotoDeclarationHandler implementation="com.intellij.lang.javascript.navigation.JSGotoDeclarationHandler"/>
+    <indexedRootsProvider implementation="com.intellij.lang.javascript.index.JSIndexedRootProvider"/>
+    <refactoring.inlineHandler language="JavaScript" implementationClass="com.intellij.lang.javascript.refactoring.inline.JSInlineHandler"/>
+
+    <typeHierarchyProvider language="JavaScript" implementationClass="com.intellij.lang.javascript.hierarchy.type.JSTypeHierarchyProvider"/>
+    <typeHierarchyProvider language="Mxml" implementationClass="com.intellij.lang.javascript.hierarchy.type.JSTypeHierarchyProvider"/>
+    <methodHierarchyProvider language="JavaScript"
+                             implementationClass="com.intellij.lang.javascript.hierarchy.method.JSMethodHierarchyProvider"/>
+    <methodHierarchyProvider language="Mxml" implementationClass="com.intellij.lang.javascript.hierarchy.method.JSMethodHierarchyProvider"/>
+    <callHierarchyProvider language="JavaScript" implementationClass="com.intellij.lang.javascript.hierarchy.call.JSCallHierarchyProvider"/>
+    <callHierarchyProvider language="Mxml" implementationClass="com.intellij.lang.javascript.hierarchy.call.JSCallHierarchyProvider"/>
+    <extendWordSelectionHandler implementation="com.intellij.lang.javascript.syntaxSelection.JavaScriptLiteralSelectioner"/>
+    <extendWordSelectionHandler implementation="com.intellij.lang.javascript.syntaxSelection.JavaScriptStatementGroupSelectioner"/>
+    <extendWordSelectionHandler implementation="com.intellij.lang.javascript.syntaxSelection.JavaScriptPropertyCommaSelectioner"/>
+    <extendWordSelectionHandler implementation="com.intellij.lang.javascript.syntaxSelection.JavaScriptParameterListSelectioner"/>
+    <extendWordSelectionHandler implementation="com.intellij.lang.javascript.frameworks.react.JSXScriptSelectioner"/>
+    <extendWordSelectionHandler implementation="com.intellij.lang.javascript.syntaxSelection.JavaScriptCommentSelectioner"/>
+    <extendWordSelectionHandler implementation="com.intellij.lang.javascript.syntaxSelection.JavaScriptForStatementParensContentSelectioner"/>
+    <extendWordSelectionHandler implementation="com.intellij.lang.javascript.syntaxSelection.JavaScriptReferenceExpressionSelectioner"/>
+    <extendWordSelectionHandler implementation="com.intellij.lang.javascript.syntaxSelection.ES6ComputedPropertyNameSelectioner"/>
+    <extendWordSelectionHandler implementation="com.intellij.lang.javascript.syntaxSelection.ES6StringTemplateSelectioner"/>
+    <extendWordSelectionHandler implementation="com.intellij.lang.javascript.syntaxSelection.TypeScriptTypeParameterListSelectioner"/>
+    <basicWordSelectionFilter implementation="com.intellij.lang.javascript.syntaxSelection.JavaScriptSelectionFilter"/>
+    <lang.unwrapDescriptor language="JavaScript" implementationClass="com.intellij.lang.javascript.editing.JavaScriptUnwrapDescriptor"/>
+    <postFormatProcessor implementation="com.intellij.lang.javascript.formatter.JSBracePostFormatProcessor"/>
+    <postFormatProcessor implementation="com.intellij.lang.javascript.formatter.JSCommentPostFormatProcessor"/>
+    <langCodeStyleSettingsProvider implementation="com.intellij.lang.javascript.formatter.JSLanguageCodeStyleSettingsProvider"/>
+    <langCodeStyleSettingsProvider implementation="com.intellij.lang.typescript.formatter.TypeScriptLanguageCodeStyleSettingsProvider"/>
+    <lineIndentProvider implementation="com.intellij.lang.javascript.editing.JSLineIndentProvider"/>
+    <qualifiedNameProvider implementation="com.intellij.lang.javascript.findUsages.JSQualifiedNameProvider"/>
+    <typedHandler implementation="com.intellij.lang.javascript.editing.JavaScriptTypedHandler" order="before xmlAuto"/>
+    <selectionDequotingFilter implementation="com.intellij.lang.javascript.editing.JSSelectionDequotingFilter"/>
+
+    <enterHandlerDelegate implementation="com.intellij.lang.javascript.editing.JSEnterInNewFunctionHandler"/>
+    <enterHandlerDelegate implementation="com.intellij.javascript.JSEnterInStringLiteralHandler" id="JSEnterInStringLiteralHandler"/>
+    <enterHandlerDelegate implementation="com.intellij.lang.javascript.editing.JSEnterInEmptyArrayHandler"/>
+
+    <backspaceHandlerDelegate implementation="com.intellij.lang.javascript.highlighting.JSBackspaceHandler"/>
+
+    <defaultTemplatePropertiesProvider implementation="com.intellij.lang.javascript.ActionScriptAccessModifierTemplatePropertyProvider"/>
+
+    <psi.referenceContributor implementation="com.intellij.javascript.JavaScriptReferenceContributor"/>
+    <psi.referenceContributor implementation="com.intellij.javascript.JavaScriptCssReferenceContributor"/>
+    <psi.referenceContributor implementation="com.intellij.lang.javascript.frameworks.bindows.BindowsReferenceContributor"/>
+    <psi.referenceContributor implementation="com.intellij.lang.javascript.frameworks.dojo.DojoReferenceContributor"/>
+    <psi.referenceContributor implementation="com.intellij.lang.javascript.frameworks.extjs.ExtReferenceContributor"/>
+    <psi.referenceContributor implementation="com.intellij.lang.javascript.frameworks.amd.JSAmdReferenceContributor"/>
+    <psi.referenceContributor implementation="com.intellij.lang.javascript.frameworks.react.JSXReferenceContributor"/>
+    <psi.referenceContributor implementation="com.intellij.lang.javascript.ecmascript6.TypeScriptReferenceContributor"/>
+    <psi.referenceContributor language="JavaScript" implementation="com.intellij.lang.javascript.frameworks.modules.NodeJSReferenceContributor"/>
+    <psi.referenceContributor language="JSON" implementation="com.intellij.lang.javascript.json.JsonPropertyReferenceContributor"/>
+    <xml.xmlExtension implementation="com.intellij.lang.javascript.frameworks.react.ReactXmlExtension" order="first"/>
+    <xml.tagNameProvider implementation="com.intellij.lang.javascript.frameworks.react.ReactXmlExtension"/>
+
+    <highlightVisitor implementation="com.intellij.lang.javascript.frameworks.react.ReactHighlightVisitor"/>
+    <highlightVisitor implementation="com.intellij.lang.javascript.highlighting.JSRainbowVisitor"/>
+
+    <lang.ast.factory language="JavaScript" implementationClass="com.intellij.lang.javascript.JavascriptASTFactory" />
+    <xml.idContributor implementation="com.intellij.lang.javascript.highlighting.JavaScriptIdContributor"/>
+    <html.scriptContentProvider language="JavaScript" implementationClass="com.intellij.javascript.JSScriptContentProvider"/>
+    <html.scriptContentProvider language="JSX Harmony" implementationClass="com.intellij.lang.javascript.frameworks.react.JSXScriptContentProvider"/>
+    <html.scriptContentProvider language="TypeScript" implementationClass="com.intellij.lang.typescript.TypeScriptContentProvider"/>
+    <html.scriptContentProvider language="ECMAScript 6" implementationClass="com.intellij.lang.ecmascript6.ES6ScriptContentProvider"
+                                order="before JSScriptContentProvider"/>
+    <html.inlineScriptTokenTypesProvider language="JavaScript"
+                                         implementationClass="com.intellij.javascript.HtmlInlineJSScriptTokenTypesProvider"/>
+    <embeddedTokenTypesProvider implementation="com.intellij.javascript.JSEmbeddedTokenTypesProvider"/>
+
+
+    <optionsApplicabilityFilter implementation="com.intellij.javascript.JSOptionsApplicabilityFilter"/>
+    <highlightUsagesHandlerFactory implementation="com.intellij.lang.javascript.highlighting.JSHighlightFunctionExitPointsHandlerFactory"/>
+    <highlightUsagesHandlerFactory implementation="com.intellij.lang.javascript.highlighting.JSExtendsImplementsHighlightingFactory"/>
+
+    <library.type implementation="com.intellij.lang.javascript.library.JSLibraryType"/>
+    <project.converterProvider implementation="com.intellij.lang.javascript.library.JSCorePredefinedLibrariesConverterProvider"/>
+
+    <orderEnumerationHandlerFactory implementation="com.intellij.lang.javascript.psi.resolve.JSOrderEnumerationHandler$FactoryImpl"/>
+    <hectorComponentProvider implementation="com.intellij.lang.javascript.library.ui.JSUsedLibrariesHectorProvider"/>
+
+    <projectConfigurable id="Settings.JavaScript"
+                         groupId="language"
+                         groupWeight="170"
+                         instance="com.intellij.lang.javascript.settings.JSRootConfigurable"
+                         key="settings.javascript.root.configurable.name"
+                         bundle="messages.JavaScriptBundle"/>
+    <projectConfigurable id="JavaScript.Libraries"
+                         parentId="Settings.JavaScript"
+                         instance="com.intellij.lang.javascript.library.ui.JSScriptingContextConfigurable"
+                         key="js.library.configurable.name"
+                         bundle="messages.JavaScriptBundle"
+                         order="first"
+                         nonDefaultProject="true"/>
+    <projectConfigurable id="Settings.JavaScript.Linters"
+                         parentId="Settings.JavaScript"
+                         instance="com.intellij.lang.javascript.linter.JSLintersConfigurable"
+                         key="settings.javascript.linters.configurable.name"
+                         bundle="messages.JavaScriptBundle"
+                         order="after JavaScript.Libraries"/>
+
+    <projectConfigurable id="Settings.JavaScript.Templates"
+                         parentId="Settings.JavaScript"
+                         provider="com.intellij.lang.javascript.settings.JSTemplateLangConfigurableProvider"
+                         bundle="messages.JavaScriptBundle"
+                         key="settings.javascript.lang.templates.configurable.name"
+                         order="after Settings.JavaScript.Linters"/>
+    <directoryProjectConfigurator implementation="com.intellij.lang.javascript.linter.JSLinterGuesser"/>
+    <postStartupActivity implementation="com.intellij.lang.javascript.linter.PackageJsonForLintersConfigChangeTracker"/>
+
+    <!-- Flow -->
+    <search.optionContributor implementation="com.intellij.lang.javascript.flow.FlowJSSearchableOptionContributor"/>
+
+    <projectService serviceInterface="com.intellij.lang.javascript.flow.FlowJSToolWindowProvider"
+                    serviceImplementation="com.intellij.lang.javascript.flow.FlowJSToolWindowProvider"/>
+
+    <projectService serviceInterface="com.intellij.lang.javascript.flow.FlowJSSettingsManager"
+                    serviceImplementation="com.intellij.lang.javascript.flow.FlowJSSettingsManager"/>
+
+    <projectService serviceInterface="com.intellij.lang.javascript.flow.FlowJSServerService"
+                    serviceImplementation="com.intellij.lang.javascript.flow.FlowJSServerService"/>
+
+    <externalAnnotator language="JavaScript" implementationClass="com.intellij.lang.javascript.flow.FlowJSExternalAnnotator"/>
+
+    <projectService serviceInterface="com.intellij.lang.javascript.flow.flowconfig.FlowJSConfigService"
+                    serviceImplementation="com.intellij.lang.javascript.flow.FlowJSConfigServiceImpl"/>
+
+    <gotoDeclarationHandler implementation="com.intellij.lang.javascript.flow.navigation.FlowJSGoToDeclarationHandler"/>
+
+    <codeInsight.typeInfo language="Flow JS" implementationClass="com.intellij.lang.javascript.actions.FlowJSShowTypeInfoAction"/>
+
+    <!-- JSLint -->
+    <projectConfigurable id="Settings.JavaScript.Linters.JSLint"
+                         parentId="Settings.JavaScript.Linters"
+                         instance="com.intellij.lang.javascript.linter.jslint.JSLintConfigurable"
+                         key="settings.javascript.linters.jslint.configurable.name"
+                         bundle="messages.JavaScriptBundle"
+                         order="first"/>
+    <localInspection language="JavaScript"
+                     bundle="messages.JavaScriptBundle"
+                     key="settings.javascript.linters.jslint.configurable.name"
+                     groupPath="JavaScript"
+                     groupKey="js.linters.inspection.group.name"
+                     enabledByDefault="false"
+                     level="ERROR"
+                     implementationClass="com.intellij.lang.javascript.linter.jslint.JSLintInspection"
+                     unfair="true"/>
+    <externalAnnotator language="JavaScript" implementationClass="com.intellij.lang.javascript.linter.jslint.JSLintExternalAnnotator"/>
+    <externalAnnotator language="JSON" implementationClass="com.intellij.lang.javascript.linter.jslint.JSLintJsonExternalAnnotator"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.jslint.JSLintConfiguration"/>
+
+    <!-- JSHint -->
+    <projectConfigurable id="Settings.JavaScript.Linters.JSHint"
+                         parentId="Settings.JavaScript.Linters"
+                         instance="com.intellij.lang.javascript.linter.jshint.JSHintConfigurable"
+                         key="settings.javascript.linters.jshint.configurable.name"
+                         bundle="messages.JavaScriptBundle"
+                         order="after Settings.JavaScript.Linters.JSLint"/>
+    <localInspection language="JavaScript"
+                     bundle="messages.JavaScriptBundle"
+                     key="settings.javascript.linters.jshint.configurable.name"
+                     groupPath="JavaScript"
+                     groupKey="js.linters.inspection.group.name"
+                     enabledByDefault="false"
+                     level="ERROR"
+                     implementationClass="com.intellij.lang.javascript.linter.jshint.JSHintInspection"
+                     unfair="true"/>
+    <externalAnnotator language="JavaScript" implementationClass="com.intellij.lang.javascript.linter.jshint.JSHintExternalAnnotator"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.jshint.JSHintConfiguration"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.jshint.config.JSHintConfigFileChangeTracker"/>
+    <fileTypeFactory implementation="com.intellij.lang.javascript.linter.jshint.config.JSHintFileTypesFactory"/>
+    <completion.contributor order="first" language="JSON"
+                            implementationClass="com.intellij.lang.javascript.linter.jshint.config.JSHintConfigCompletionContributor"/>
+    <annotator language="JSON" implementationClass="com.intellij.lang.javascript.linter.jshint.config.JSHintConfigFileAnnotator"/>
+    <lang.documentationProvider language="JSON"
+                                implementationClass="com.intellij.lang.javascript.linter.jshint.config.JSHintConfigDocumentationProvider"/>
+    <psi.referenceContributor language="JSON"
+                              implementation="com.intellij.lang.javascript.linter.jshint.config.JSHintConfigReferenceContributor"/>
+    <refactoring.elementListenerProvider implementation="com.intellij.lang.javascript.linter.jshint.JSHintRefactoringElementListenerProvider"/>
+
+    <!-- Google Closure Linter -->
+    <projectConfigurable id="Settings.JavaScript.Linters.ClosureLinter"
+                         parentId="Settings.JavaScript.Linters"
+                         instance="com.intellij.lang.javascript.linter.gjslint.GjsLintConfigurable"
+                         key="settings.javascript.linters.gjslint.configurable.name"
+                         bundle="messages.JavaScriptBundle"
+                         order="after Settings.JavaScript.Linters.JSHint"/>
+    <localInspection language="JavaScript"
+                     bundle="messages.JavaScriptBundle"
+                     key="settings.javascript.linters.gjslint.configurable.name"
+                     groupPath="JavaScript"
+                     groupKey="js.linters.inspection.group.name"
+                     enabledByDefault="false"
+                     level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.linter.gjslint.GjsLintInspection"
+                     unfair="true"/>
+    <externalAnnotator language="JavaScript" implementationClass="com.intellij.lang.javascript.linter.gjslint.GjsLintExternalAnnotator"/>
+    <externalAnnotator language="HTML" implementationClass="com.intellij.lang.javascript.linter.gjslint.GjsLintHtmlExternalAnnotator"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.gjslint.GjsLintConfiguration"/>
+
+    <!-- JSCS -->
+    <projectConfigurable id="settings.javascript.linters.jscs"
+                         parentId="Settings.JavaScript.Linters"
+                         instance="com.intellij.lang.javascript.linter.jscs.JscsConfigurable"
+                         key="settings.javascript.linters.jscs.configurable.name"
+                         bundle="messages.JavaScriptBundle"
+                         order="after Settings.JavaScript.Linters.ClosureLinter"/>
+    <localInspection language="JavaScript"
+                     bundle="messages.JavaScriptBundle"
+                     key="settings.javascript.linters.jscs.configurable.name"
+                     groupPath="JavaScript"
+                     groupKey="js.linters.inspection.group.name"
+                     enabledByDefault="false"
+                     level="ERROR"
+                     implementationClass="com.intellij.lang.javascript.linter.jscs.JscsInspection"
+                     unfair="true"/>
+    <externalAnnotator language="JavaScript" implementationClass="com.intellij.lang.javascript.linter.jscs.JscsExternalAnnotator"/>
+    <externalAnnotator language="HTML" implementationClass="com.intellij.lang.javascript.linter.jscs.JscsExternalAnnotator"/>
+    <annotator language="JSON" implementationClass="com.intellij.lang.javascript.linter.jscs.config.JscsConfigFileAnnotator"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.jscs.JscsConfiguration"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.jscs.config.JscsConfigFileChangeTracker"/>
+    <fileTypeFactory implementation="com.intellij.lang.javascript.linter.jscs.config.JscsFileTypesFactory"/>
+    <completion.contributor order="first" language="JSON"
+                            implementationClass="com.intellij.lang.javascript.linter.jscs.config.JscsConfigFileCompletionContributor"/>
+    <lang.documentationProvider language="JSON"
+                                implementationClass="com.intellij.lang.javascript.linter.jscs.config.JscsConfigDocumentationProvider"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.SharedConfigurationPaths"/>
+    <refactoring.elementListenerProvider implementation="com.intellij.lang.javascript.linter.ConfigurationPathsRefactoringElementListenerProvider"/>
+    <schemeImporter name="JSCS config file" implementationClass="com.intellij.lang.javascript.linter.jscs.importer.JscsSchemeImporter"
+                    schemeClass="com.intellij.psi.codeStyle.CodeStyleScheme"/>
+
+    <!-- ESLint -->
+    <projectConfigurable id="settings.javascript.linters.eslint"
+                         parentId="Settings.JavaScript.Linters"
+                         instance="com.intellij.lang.javascript.linter.eslint.EslintConfigurable"
+                         key="settings.javascript.linters.eslint.configurable.name"
+                         bundle="messages.JavaScriptBundle"
+                         order="after settings.javascript.linters.jscs"/>
+    <localInspection language="JavaScript"
+                     bundle="messages.JavaScriptBundle"
+                     key="settings.javascript.linters.eslint.configurable.name"
+                     groupPath="JavaScript"
+                     groupKey="js.linters.inspection.group.name"
+                     enabledByDefault="false"
+                     level="ERROR"
+                     implementationClass="com.intellij.lang.javascript.linter.eslint.EslintInspection"
+                     unfair="true"/>
+    <externalAnnotator language="JavaScript" implementationClass="com.intellij.lang.javascript.linter.eslint.EslintExternalAnnotator"/>
+    <externalAnnotator language="HTML" implementationClass="com.intellij.lang.javascript.linter.eslint.EslintExternalAnnotator"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.eslint.EslintConfiguration"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.eslint.config.EslintConfigFileChangeTracker"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.eslint.EslintUnsavedConfigManager"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.eslint.service.ESLintLanguageService"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.eslint.service.StandardJSService"/>
+    <fileTypeFactory implementation="com.intellij.lang.javascript.linter.eslint.config.EslintFileTypeFactory"/>
+    <iconProvider implementation="com.intellij.lang.javascript.linter.eslint.config.EslintConfigIconProvider"/>
+    <spellchecker.support language="JSON" order="first"
+                          implementationClass="com.intellij.lang.javascript.linter.eslint.config.EslintConfigFileSpellcheckingStrategy"/>
+    <json.jsonStandardComplianceProvider implementation="com.intellij.lang.javascript.linter.eslint.config.EslintConfigStandardComplianceProvider"/>
+    <json.jsonStandardComplianceProvider implementation="com.intellij.lang.typescript.tsconfig.TypeScriptConfigComplianceProvider"/>
+    <lang.substitutor language="JSON" implementationClass="com.intellij.lang.javascript.linter.eslint.config.EslintConfigLangSubstitutor"/>
+
+    <JavaScript.linter.descriptor implementation="com.intellij.lang.javascript.linter.eslint.EsLintDescriptor"/>
+
+
+    <!--StandardJS -->
+    <externalAnnotator language="JavaScript" implementationClass="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSExternalAnnotator"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSConfiguration"/>
+    <editorNotificationProvider implementation="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSCodeStyleNotifierProvider"/>
+    <JavaScript.linter.descriptor implementation="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSDescriptor"/>
+
+    <localInspection language="JavaScript"
+                     bundle="messages.JavaScriptBundle"
+                     key="standardjs.name"
+                     groupPath="JavaScript"
+                     groupKey="js.linters.inspection.group.name"
+                     enabledByDefault="false"
+                     level="ERROR"
+                     implementationClass="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSInspection"
+                     unfair="true"/>
+
+
+    <JavaScript.linter.descriptor implementation="com.intellij.lang.javascript.linter.jscs.config.JscsLinterDescriptor"/>
+    <JavaScript.linter.descriptor implementation="com.intellij.lang.javascript.linter.gjslint.GjsLinterDescriptor"/>
+
+
+    <JavaScript.linter.descriptor implementation="com.intellij.lang.css.linter.stylelint.StylelintLinterDescriptor"/>
+    <JavaScript.linter.descriptor implementation="com.intellij.lang.javascript.linter.jshint.config.JSHintDescriptor"/>
+
+    <librarySettingsProvider implementation="com.intellij.lang.javascript.library.JSLibrarySettingsProvider"/>
+    <projectService serviceInterface="com.intellij.lang.javascript.library.JSLibraryMappings"
+                    serviceImplementation="com.intellij.lang.javascript.library.JSLibraryMappings"/>
+    <projectService serviceInterface="com.intellij.lang.javascript.library.JSLibraryManager"
+                    serviceImplementation="com.intellij.lang.javascript.library.JSLibraryManager"/>
+
+    <completion.confidence language="JavaScript" implementationClass="com.intellij.lang.javascript.completion.JSAutoCompletionPopupPolicy"
+                           id="asTrue" order="last"/>
+    <usageTypeProvider implementation="com.intellij.lang.javascript.findUsages.JSUsageTypeProvider"/>
+
+    <methodNavigationOffsetProvider implementation="com.intellij.lang.javascript.navigation.JSMethodNavigationOffsetProvider"/>
+
+    <xml.relatedToHtmlFilesContributor implementation="com.intellij.lang.javascript.navigation.JSRelatedFilesContributor"/>
+    <quoteHandler fileType="JavaScript" className="com.intellij.javascript.JSQuoteHandler"/>
+    <quoteHandler fileType="ActionScript" className="com.intellij.javascript.JSQuoteHandler"/>
+    <quoteHandler fileType="TypeScript" className="com.intellij.javascript.JSQuoteHandler"/>
+    <quoteHandler fileType="TypeScript JSX" className="com.intellij.javascript.JSQuoteHandler"/>
+    <quoteHandler fileType="ECMAScript 6" className="com.intellij.javascript.JSQuoteHandler"/>
+    <quoteHandler fileType="JSX Harmony" className="com.intellij.javascript.JSQuoteHandler"/>
+
+    <lang.structureViewExtension implementation="com.intellij.javascript.JSStructureViewExtension"/>
+
+    <statistics.usagesCollector implementation="com.intellij.lang.javascript.library.stat.JSLibraryUsagesCollector"/>
+    <statistics.usagesCollector implementation="com.intellij.lang.javascript.library.stat.JSScopeUsagesCollector"/>
+    <statistics.usagesCollector implementation="com.intellij.lang.javascript.dialects.JSDialectUsagesCollector"/>
+
+    <equivalenceDescriptorProvider implementation="com.intellij.dupLocator.JSEquivalenceDescriptorProvider"/>
+    <duplicates.profile implementation="com.intellij.dupLocator.JSDuplicatesProfile"/>
+    <duplicates.presentation implementation="com.intellij.dupLocator.JSDuplicatesPresentation"/>
+
+    <referencesSearch implementation="com.intellij.lang.javascript.search.JSConstructorReferencesSearcher"/>
+    <lang.inspectionSuppressor language="JavaScript" implementationClass="com.intellij.lang.javascript.inspections.JSInspectionSuppressor"/>
+    <writingAccessProvider implementation="com.intellij.lang.javascript.library.JSLibraryWritingAccessProvider"/>
+    <nonProjectFileWritingAccessExtension implementation="com.intellij.lang.javascript.library.JSLibraryWritingAccessProvider$AccessExtension"/>
+
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSAnnotator"
+                     key="js.annotator.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="ERROR" implementationClass="com.intellij.lang.javascript.inspections.JSAnnotatorInspection"
+                     unfair="true"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSUnresolvedVariable"
+                     key="js.unresolved.variable.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WEAK WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection"
+                     unfair="true"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSUnresolvedFunction"
+                     key="js.unresolved.function.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WEAK WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSUnresolvedFunctionInspection"
+                     unfair="true"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSPotentiallyInvalidConstructorUsage"
+                     key="js.potentially.invalid.constructor.usages.inspection.name" groupKey="js.inspection.group.name"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.inspections.JSPotentiallyInvalidConstructorUsageInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSUnnecessarySemicolon"
+                     key="js.unnecessary.semicolon.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSUnnecessarySemicolonInspection"
+                     cleanupTool="true"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSLastCommaInArrayLiteral"
+                     key="js.last.comma.in.array.literal.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSLastCommaInArrayLiteralInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSLastCommaInObjectLiteral"
+                     key="js.last.comma.in.object.literal.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSLastCommaInObjectLiteralInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSUndeclaredVariable"
+                     key="js.undeclared.variable.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WEAK WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSUndeclaredVariableInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSUnusedAssignment"
+                     key="js.unused.assignment.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.inspections.JSUnusedAssignmentInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSValidateTypes"
+                     key="js.validate.types.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WEAK WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSValidateTypesInspection"
+                     unfair="true"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSCheckFunctionSignatures"
+                     key="js.validate.signature.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WEAK WARNING"
+                     implementationClass="com.intellij.lang.javascript.inspections.JSCheckFunctionSignaturesInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSValidateJSDoc"
+                     key="js.validate.jsdoc.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.inspections.JSValidateJSDocInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSDuplicatedDeclaration"
+                     key="js.duplicate.declaration.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSDuplicatedDeclarationInspection"
+                     unfair="true"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSDeprecatedSymbols"
+                     key="js.deprecated.symbols.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WEAK WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSDeprecatedSymbolsInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSReferencingMutableVariableFromClosure"
+                     key="js.referencing.mutable.variable.from.closure.inspection.name" groupKey="js.inspection.group.name"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.inspections.JSReferencingMutableVariableFromClosureInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSPotentiallyInvalidTargetOfIndexedPropertyAccess"
+                     key="js.potentially.invalid.target.of.indexed.property.access.inspection.name" groupKey="js.inspection.group.name"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.inspections.JSPotentiallyInvalidTargetOfIndexedPropertyAccess"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSPotentiallyInvalidUsageOfThis"
+                     key="js.potentially.invalid.usage.of.this.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.inspections.JSPotentiallyInvalidUsageOfThisInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSUnfilteredForInLoop"
+                     key="js.unfiltered.for.in.loop.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSUnfilteredForInLoopInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSUnusedLocalSymbols"
+                     key="js.unused.local.symbol.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection"/>
+
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ES6UnusedImports"
+                     key="js.unused.es6.import.inspection.name"
+                     groupKey="js.inspection.group.name"
+                     enabledByDefault="true"
+                     level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.ES6UnusedImportsInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ES6MissingAwait"
+                     key="js.missing.await.symbol.inspection.name"
+                     groupKey="js.inspection.group.name"
+                     enabledByDefault="true"
+                     level="INFORMATION" implementationClass="com.intellij.lang.javascript.inspections.ES6MissingAwaitInspection"/>
+
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSXNamespaceValidation"
+                     key="jsx.missing.namespace.inspection.name"
+                     groupKey="js.inspection.group.name"
+                     enabledByDefault="true"
+                     level="WEAK WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSXNamespaceValidationInspection"/>
+
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ES6PossiblyAsyncFunction"
+                     key="js.possibly.async.function.inspection"
+                     groupKey="js.inspection.group.name"
+                     enabledByDefault="true"
+                     level="WEAK WARNING" implementationClass="com.intellij.lang.javascript.inspections.ES6PossiblyAsyncFunctionInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ES6BindWithArrowFunction"
+                     key="js.suspicious.bind.with.arrow.function"
+                     groupKey="group.names.potentially.confusing.code.constructs"
+                     groupBundle="messages.InspectionsBundle"
+                     enabledByDefault="true"
+                     level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.ES6BindWithArrowFunctionInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ES6ConvertVarToLetConst"
+                     key="js.convert.var.to.let.or.const.inspection.text"
+                     groupKey="js.inspection.convert.to.es6.group.name" bundle="messages.JavaScriptBundle"
+                     enabledByDefault="true"
+                     suppressId="ES6ConvertVarToLetConst"
+                     level="WARNING" implementationClass="com.intellij.lang.javascript.intentions.ES6ConvertVarToLetConstInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ES6ConvertRequireIntoImport"
+                     key="js.convert.require.into.es6.import.inspection.text"
+                     groupKey="js.inspection.convert.to.es6.group.name"
+                     enabledByDefault="true"
+                     level="INFORMATION" implementationClass="com.intellij.lang.javascript.inspections.ES6ConvertRequireIntoImportInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSFunctionExpressionToArrowFunction"
+                     key="js.inspection.function.expression.is.used.instead.of.arrow"
+                     groupKey="js.inspection.convert.to.es6.group.name"
+                     enabledByDefault="true"
+                     level="INFORMATION" implementationClass="com.intellij.lang.javascript.inspections.JSFunctionExpressionToArrowFunctionInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSStringConcatenationToES6Template"
+                     key="js.replace.string.concatenation.with.es6.template.inspection.name"
+                     groupKey="js.inspection.convert.to.es6.group.name"
+                     enabledByDefault="true"
+                     level="INFORMATION" implementationClass="com.intellij.lang.javascript.inspections.JSStringConcatenationToES6TemplateInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ES6ConvertToForOf"
+                     key="js.convert.for.in.to.for.of.inspection.text"
+                     groupKey="js.inspection.convert.to.es6.group.name"
+                     enabledByDefault="true"
+                     level="INFORMATION" implementationClass="com.intellij.lang.javascript.inspections.ES6ConvertToForOfInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript"
+                     key="js.inspection.promise.ignored.display.name" groupKey="js.probable.bugs.group.name" enabledByDefault="true"
+                     level="WEAK WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSIgnoredPromiseFromCallInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSUnusedGlobalSymbols"
+                     key="js.unused.global.symbol.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSSuspiciousNameCombination"
+                     key="js.suspicious.name.combination.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSSuspiciousNameCombinationInspection"/>
+    <localInspection language="HTML" groupPath="JavaScript" shortName="JSUnresolvedLibraryURL"
+                     key="js.library.unresolved.url.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSUnresolvedLibraryURLInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSMismatchedCollectionQueryUpdate"
+                     key="js.mismatched.update.collection.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.inspections.JSMismatchedCollectionQueryUpdateInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSBitwiseOperatorUsage" key="js.bitwise.operator.usage.name"
+                     groupKey="js.inspection.bitwise.group.name" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.inspections.JSBitwiseOperatorUsageInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSClosureCompilerSyntax"
+                     key="js.closure.compiler.syntax.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSClosureCompilerSyntaxInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSUndefinedPropertyAssignment"
+                     key="js.undefined.property.assignment.inspection.name" groupKey="js.code.style.issues.group.name"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     implementationClass="com.intellij.lang.javascript.inspections.JSUndefinedPropertyAssignmentInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSDeclarationsAtScopeStart"
+                     key="js.declarations.at.scope.start.inspection" groupKey="js.code.style.issues.group.name" enabledByDefault="false"
+                     level="WEAK WARNING"
+                     implementationClass="com.intellij.lang.javascript.inspections.JSDeclarationsAtScopeStartInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSPrimitiveTypeWrapperUsage"
+                     key="js.primitive.type.wrapper.usage.inspection" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSPrimitiveTypeWrapperUsageInspection"
+                     cleanupTool="true"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSComparisonWithNaN"
+                     key="js.comparison.with.nan.inspection.name" groupKey="js.probable.bugs.group.name" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSComparisonWithNaNInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSJQueryEfficiency"
+                     key="js.jquery.efficiency.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSJQueryEfficiencyInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSAccessibilityCheck" unfair="true"
+                     key="js.accessibility.check.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSAccessibilityCheckInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSConstructorReturnsPrimitive"
+                     key="js.constructor.returns.primitive.inspection.name" groupKey="js.probable.bugs.group.name" enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.inspections.JSConstructorReturnsPrimitiveInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSCommentMatchesSignature"
+                     key="js.comment.matches.signature.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSCommentMatchesSignatureInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSConsecutiveCommasInArrayLiteral"
+                     key="js.consecutive.commas.in.array.literal.inspection.name"
+                     groupKey="js.probable.bugs.group.name" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.inspections.JSConsecutiveCommasInArrayLiteralInspection"/>
+
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="DocumentWriteJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="call.to.document.write.display.name"
+                     groupBundle="com.sixrr.inspectjs.InspectionJSBundle" groupKey="javascript.dom.issues.group.name"
+                     enabledByDefault="false" level="WARNING" implementationClass="com.sixrr.inspectjs.dom.DocumentWriteJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="InnerHTMLJS" bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="use.of.innerhtml.property.display.name"
+                     groupName="DOM issues" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.dom.InnerHTMLJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="PlatformDetectionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="platform.detection.display.name"
+                     groupName="DOM issues" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.dom.PlatformDetectionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="XHTMLIncompatabilitiesJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="xhtml.incompatibilities.display.name" groupName="DOM issues" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.dom.XHTMLIncompatabilitiesJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="LoopStatementThatDoesntLoopJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="loop.statement.that.doesn.t.loop.display.name" groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.control.LoopStatementThatDoesntLoopJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="InfiniteLoopJS" bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="infinite.loop.statement.display.name"
+                     groupKey="probable.bugs.javascript.group.name" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.bugs.InfiniteLoopJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="InfiniteRecursionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="infinite.recursion.display.name"
+                     groupKey="probable.bugs.javascript.group.name" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.bugs.InfiniteRecursionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="PointlessBooleanExpressionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="pointless.boolean.expression.display.name" groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.confusing.PointlessBooleanExpressionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="PointlessArithmeticExpressionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="pointless.arithmetic.expression.display.name" groupKey="group.names.potentially.confusing.code.constructs" groupBundle="messages.InspectionsBundle"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.confusing.PointlessArithmeticExpressionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="NegatedIfStatementJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="negated.if.statement.display.name" groupKey="group.names.potentially.confusing.code.constructs" groupBundle="messages.InspectionsBundle" enabledByDefault="false"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.confusing.NegatedIfStatementJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="NegatedConditionalExpressionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="negated.conditional.expression.display.name" groupKey="group.names.potentially.confusing.code.constructs" groupBundle="messages.InspectionsBundle"
+                     enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.confusing.NegatedConditionalExpressionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="BreakStatementJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="break.statement.display.name"
+                     groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.control.BreakStatementJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="BreakStatementWithLabelJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="break.statement.with.label.display.name" groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.control.BreakStatementWithLabelJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ContinueStatementJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="continue.statement.display.name"
+                     groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.control.ContinueStatementJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ContinueStatementWithLabelJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="continue.statement.with.label.display.name" groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="false"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.control.ContinueStatementWithLabelJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="DefaultNotLastCaseInSwitchJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="default.not.last.case.in.switch.display.name" groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="false"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.control.DefaultNotLastCaseInSwitchJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="UnnecessaryContinueJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="unnecessary.continue.statement.display.name" groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.control.UnnecessaryContinueJSInspection" cleanupTool="true"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" suppressId="UnnecessaryReturnStatementJS" shortName="UnnecessaryReturnJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="unnecessary.return.statement.display.name"
+                     groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.control.UnnecessaryReturnJSInspection" cleanupTool="true"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="UnnecessaryLabelOnBreakStatementJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="unnecessary.label.on.break.statement.display.name" groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.control.UnnecessaryLabelOnBreakStatementJSInspection"
+                     cleanupTool="true"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="UnnecessaryLabelOnContinueStatementJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="unnecessary.label.on.continue.statement.display.name" groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.control.UnnecessaryLabelOnContinueStatementJSInspection"
+                     cleanupTool="true"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="LabeledStatementJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="labeled.statement.display.name"
+                     groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.control.LabeledStatementJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="SwitchStatementWithNoDefaultBranchJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="switch.statement.with.no.default.branch.display.name" groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="false"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.control.SwitchStatementWithNoDefaultBranchJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="FallThroughInSwitchStatementJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="fall.through.in.switch.statement.display.name" groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.control.FallThroughInSwitchStatementJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="NestedSwitchStatementJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="nested.switch.statement.display.name" groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.control.NestedSwitchStatementJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="DuplicateConditionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="duplicate.condition.in.if.statement.display.name" groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="false"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.control.DuplicateConditionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ConstantConditionalExpressionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="constant.conditional.expression.display.name" groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.control.ConstantConditionalExpressionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ConstantIfStatementJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="constant.if.statement.display.name" groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.control.ConstantIfStatementJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ConditionalExpressionWithIdenticalBranchesJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="conditional.expression.with.identical.branches.display.name" groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle"
+                     enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.control.ConditionalExpressionWithIdenticalBranchesJSInspection"
+                     cleanupTool="true"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="IfStatementWithIdenticalBranchesJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="if.statement.with.identical.branches.display.name" groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="false"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.control.IfStatementWithIdenticalBranchesJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="IfStatementWithTooManyBranchesJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="if.statement.with.too.many.branches.display.name" groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="false"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.control.IfStatementWithTooManyBranchesJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" suppressId="RedundantIfStatementJS" shortName="TrivialIfJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="redundant.if.statement.display.name" groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.control.TrivialIfJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" suppressId="RedundantConditionalExpressionJS"
+                     shortName="TrivialConditionalJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="redundant.conditional.expression.display.name"
+                     groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.control.TrivialConditionalJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="UnnecessaryLabelJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="unnecessary.label.display.name"
+                     groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.control.UnnecessaryLabelJSInspection"
+                     cleanupTool="true"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ForLoopThatDoesntUseLoopVariableJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="for.loop.not.use.loop.variable.display.name" groupKey="probable.bugs.javascript.group.name"
+                     enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.control.ForLoopThatDoesntUseLoopVariableJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="TailRecursionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="tail.recursion.display.name"
+                     groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.control.TailRecursionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" suppressId="ForLoopReplaceableByWhile"
+                     shortName="ForLoopReplaceableByWhileJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="for.loop.replaceable.by.while.display.name"
+                     groupKey="group.names.control.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.control.ForLoopReplaceableByWhileJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="AssignmentResultUsedJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="result.of.assignment.used.displayName" groupName="Assignment issues" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.assignment.AssignmentResultUsedJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="NestedAssignmentJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="nested.assignment.display.name"
+                     groupName="Assignment issues" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.assignment.NestedAssignmentJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="AssignmentToFunctionParameterJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="assignment.to.function.parameter.display.name" groupName="Assignment issues" enabledByDefault="false"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.assignment.AssignmentToFunctionParameterJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="AssignmentToForLoopParameterJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="assignment.to.for.loop.parameter.display.name" groupName="Assignment issues" enabledByDefault="false"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.assignment.AssignmentToForLoopParameterJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" suppressId="AssignmentReplaceableWithOperatorAssignmentJS"
+                     shortName="ReplaceAssignmentWithOperatorAssignmentJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="assignment.replaceable.with.operator.assignment.display.name"
+                     groupName="Assignment issues" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.assignment.ReplaceAssignmentWithOperatorAssignmentJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="SillyAssignmentJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="silly.assignment.display.name"
+                     groupName="Assignment issues" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.assignment.SillyAssignmentJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="TextLabelInSwitchStatementJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="text.label.in.switch.statement.display.name" groupKey="probable.bugs.javascript.group.name"
+                     enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.bugs.TextLabelInSwitchStatementJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="NonShortCircuitBooleanExpressionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="non.short.circuit.boolean.expression.display.name" groupKey="probable.bugs.javascript.group.name"
+                     enabledByDefault="false"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.bugs.NonShortCircuitBooleanExpressionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" suppressId="ObjectAllocationIgnored" shortName="ObjectAllocationIgnoredJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="result.of.object.allocation.ignored.display.name"
+                     groupKey="probable.bugs.javascript.group.name" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.bugs.ObjectAllocationIgnoredJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="DivideByZeroJS" bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="divide.by.zero.display.name"
+                     groupKey="probable.bugs.javascript.group.name" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.bugs.DivideByZeroJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSEqualityComparisonWithCoercion"
+                     suppressId="EqualityComparisonWithCoercionJS" bundle="messages.JavaScriptBundle"
+                     key="javascript.equality.comparison.with.coercion.display.name"
+                     groupKey="js.probable.bugs.group.name"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.inspections.JSEqualityComparisonWithCoercionInspection"/>
+
+    <localInspection language="TypeScript" shortName="JSEqualityComparisonWithCoercion.TS"
+                     suppressId="EqualityComparisonWithCoercionJS" bundle="messages.JavaScriptBundle"
+                     key="javascript.equality.comparison.with.coercion.display.name"
+                     groupKey="typescript.inspection.group.name"
+                     enabledByDefault="false" level="WARNING"
+        implementationClass="com.intellij.lang.javascript.inspections.JSEqualityComparisonWithCoercionInspection$TSInspection"/>
+
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="DebuggerStatementJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="debugger.statement.display.name"
+                     groupName="JavaScript validity issues" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.validity.DebuggerStatementJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="BadExpressionStatementJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="expression.statement.which.is.not.assignment.or.call.display.name" groupName="JavaScript validity issues"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="DuplicateCaseLabelJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="duplicate.case.label.display.name" groupName="JavaScript validity issues" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.validity.DuplicateCaseLabelJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="UnreachableCodeJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="unreachable.code.display.name"
+                     groupName="JavaScript validity issues" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.validity.UnreachableCodeJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="FunctionWithInconsistentReturnsJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="function.with.inconsistent.returns.display.name" groupName="JavaScript validity issues" enabledByDefault="false"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.validity.FunctionWithInconsistentReturnsJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ThisExpressionReferencesGlobalObjectJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="this.expression.which.references.the.global.object.display.name" groupName="JavaScript validity issues"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" suppressId="ReservedWordAsName" shortName="ReservedWordUsedAsNameJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="reserved.word.used.as.name.display.name" groupName="JavaScript validity issues" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.validity.ReservedWordUsedAsNameJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="StringLiteralBreaksHTMLJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="string.literal.breaks.html.display.name" groupName="JavaScript validity issues" enabledByDefault="false"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.validity.StringLiteralBreaksHTMLJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="FunctionNamingConventionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="function.naming.convention.display.name" groupKey="group.names.naming.conventions" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.naming.FunctionNamingConventionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSClassNamingConvention"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="class.naming.convention.display.name" groupKey="group.names.naming.conventions" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.naming.JSClassNamingConventionInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="LocalVariableNamingConventionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="local.variable.naming.convention.display.name" groupKey="group.names.naming.conventions" groupBundle="messages.InspectionsBundle" enabledByDefault="false"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.naming.LocalVariableNamingConventionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ParameterNamingConventionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="function.parameter.naming.convention.display.name" groupKey="group.names.naming.conventions" groupBundle="messages.InspectionsBundle" enabledByDefault="false"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.naming.ParameterNamingConventionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="CallerJS" bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="caller.display.name"
+                     groupKey="group.names.potentially.confusing.code.constructs" groupBundle="messages.InspectionsBundle" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.confusing.CallerJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="BlockStatementJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="unnecessary.block.statement.display.name" groupKey="group.names.potentially.confusing.code.constructs" groupBundle="messages.InspectionsBundle"
+                     enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.confusing.BlockStatementJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ConditionalExpressionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="conditional.expression.display.name" groupKey="group.names.potentially.confusing.code.constructs" groupBundle="messages.InspectionsBundle" enabledByDefault="false"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.confusing.ConditionalExpressionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="CommaExpressionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="comma.expression.display.name"
+                     groupKey="group.names.potentially.confusing.code.constructs" groupBundle="messages.InspectionsBundle" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.confusing.CommaExpressionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="NestedConditionalExpressionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="nested.conditional.expression.display.name" groupKey="group.names.potentially.confusing.code.constructs" groupBundle="messages.InspectionsBundle"
+                     enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.confusing.NestedConditionalExpressionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="IncrementDecrementResultUsedJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="result.of.increment.or.decrement.used.display.name" groupKey="group.names.potentially.confusing.code.constructs" groupBundle="messages.InspectionsBundle"
+                     enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.confusing.IncrementDecrementResultUsedJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="WithStatementJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="with.statement.display.name"
+                     groupKey="group.names.potentially.confusing.code.constructs" groupBundle="messages.InspectionsBundle" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.confusing.WithStatementJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="VoidExpressionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="void.expression.display.name"
+                     groupKey="group.names.potentially.confusing.code.constructs" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.confusing.VoidExpressionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="OverlyComplexArithmeticExpressionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="overly.complex.arithmetic.expression.display.name" groupKey="group.names.potentially.confusing.code.constructs" groupBundle="messages.InspectionsBundle"
+                     enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.confusing.OverlyComplexArithmeticExpressionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="OverlyComplexBooleanExpressionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="overly.complex.boolean.expression.display.name" groupKey="group.names.potentially.confusing.code.constructs" groupBundle="messages.InspectionsBundle"
+                     enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.confusing.OverlyComplexBooleanExpressionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="NestedFunctionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="nested.function.display.name"
+                     groupKey="group.names.potentially.confusing.code.constructs" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.confusing.NestedFunctionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="AnonymousFunctionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="anonymous.function.display.name"
+                     groupKey="group.names.potentially.confusing.code.constructs" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.confusing.AnonymousFunctionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" suppressId="StatementWithEmptyBodyJS" shortName="EmptyStatementBodyJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="statement.with.empty.body.display.name" groupKey="group.names.potentially.confusing.code.constructs" groupBundle="messages.InspectionsBundle" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.confusing.EmptyStatementBodyJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="OctalIntegerJS" bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="octal.integer.display.name"
+                     groupKey="group.names.potentially.confusing.code.constructs" groupBundle="messages.InspectionsBundle" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.confusing.OctalIntegerJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ConfusingFloatingPointLiteralJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="confusing.floating.point.literal.display.name" groupKey="group.names.potentially.confusing.code.constructs" groupBundle="messages.InspectionsBundle"
+                     enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.confusing.ConfusingFloatingPointLiteralJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ConfusingPlusesOrMinusesJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="confusing.pluses.or.minuses.display.name" groupKey="group.names.potentially.confusing.code.constructs" groupBundle="messages.InspectionsBundle"
+                     enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.confusing.ConfusingPlusesOrMinusesJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="DynamicallyGeneratedCodeJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="dynamically.generated.code.display.name" groupKey="group.names.potentially.confusing.code.constructs" groupBundle="messages.InspectionsBundle"
+                     enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.confusing.DynamicallyGeneratedCodeJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="MagicNumberJS" bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="magic.number.display.name"
+                     groupKey="group.names.potentially.confusing.code.constructs" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.confusing.MagicNumberJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="EmptyCatchBlockJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="empty.catch.block.display.name"
+                     groupKey="group.names.error.handling" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.exception.EmptyCatchBlockJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="EmptyTryBlockJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="empty.try.block.display.name"
+                     groupKey="group.names.error.handling" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.exception.EmptyTryBlockJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="EmptyFinallyBlockJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="empty.finally.block.display.name"
+                     groupKey="group.names.error.handling" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.exception.EmptyFinallyBlockJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" suppressId="ReturnInsideFinallyBlockJS"
+                     shortName="ReturnFromFinallyBlockJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="return.inside.finally.block.display.name"
+                     groupKey="group.names.error.handling" groupBundle="messages.InspectionsBundle" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.exception.ReturnFromFinallyBlockJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" suppressId="ThrowInsideFinallyBlockJS" shortName="ThrowFromFinallyBlockJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="throw.inside.finally.block.display.name"
+                     groupKey="group.names.error.handling" groupBundle="messages.InspectionsBundle" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.exception.ThrowFromFinallyBlockJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ContinueOrBreakFromFinallyBlockJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="continue.or.break.inside.finally.block.display.name" groupKey="group.names.error.handling" groupBundle="messages.InspectionsBundle" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.exception.ContinueOrBreakFromFinallyBlockJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ExceptionCaughtLocallyJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="exception.used.for.local.control.flow.display.name" groupKey="group.names.error.handling" groupBundle="messages.InspectionsBundle" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.exception.ExceptionCaughtLocallyJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="UnusedCatchParameterJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="unused.catch.parameter.display.name" groupKey="group.names.error.handling" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.exception.UnusedCatchParameterJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" suppressId="ConstantOnLefSideOfComparisonJS"
+                     shortName="ConstantOnLHSOfComparisonJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="constant.on.left.side.of.comparison.display.name"
+                     groupKey="group.names.code.style.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.style.ConstantOnLHSOfComparisonJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" suppressId="ChainedEqualityComparisonsJS" shortName="ChainedEqualityJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="chained.equality.display.name" groupKey="group.names.code.style.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.style.ChainedEqualityJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ChainedFunctionCallJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="chained.function.call.display.name" groupKey="group.names.code.style.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.style.ChainedFunctionCallJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="NestedFunctionCallJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="nested.function.call.display.name" groupKey="group.names.code.style.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.style.NestedFunctionCallJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" suppressId="ConstantOnRightSideOfComparisonJS"
+                     shortName="ConstantOnRHSOfComparisonJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="constant.on.right.side.of.comparison.display.name"
+                     groupKey="group.names.code.style.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.style.ConstantOnRHSOfComparisonJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="UnterminatedStatementJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="unterminated.statement.display.name" groupKey="group.names.code.style.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection" cleanupTool="true"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="NonBlockStatementBodyJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="non.block.statement.body.display.name" groupKey="group.names.code.style.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.style.NonBlockStatementBodyJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" suppressId="OverlyNestedFunctionJS" shortName="NestingDepthJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="overly.nested.function.display.name" groupName="JavaScript function metrics" enabledByDefault="false"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.functionmetrics.NestingDepthJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" suppressId="FunctionWithMoreThanThreeNegationsJS"
+                     shortName="ThreeNegationsPerFunctionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="function.with.more.than.three.negations.display.name"
+                     groupName="JavaScript function metrics" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.functionmetrics.ThreeNegationsPerFunctionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="FunctionWithMultipleLoopsJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="function.with.multiple.loops.display.name" groupName="JavaScript function metrics" enabledByDefault="false"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.functionmetrics.FunctionWithMultipleLoopsJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="FunctionWithMultipleReturnPointsJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="function.with.multiple.return.points.display.name" groupName="JavaScript function metrics"
+                     enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.functionmetrics.FunctionWithMultipleReturnPointsJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" suppressId="OverlyComplexFunctionJS" shortName="CyclomaticComplexityJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="overly.complex.function.display.name" groupName="JavaScript function metrics" enabledByDefault="false"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.functionmetrics.CyclomaticComplexityJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" suppressId="OverlyComplexFunctionJS" shortName="ParametersPerFunctionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="function.with.too.many.parameters.display.name"
+                     groupName="JavaScript function metrics" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.functionmetrics.ParametersPerFunctionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" suppressId="FunctionTooLongJS" shortName="StatementsPerFunctionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="overly.long.function.display.name" groupName="JavaScript function metrics" enabledByDefault="false"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.functionmetrics.StatementsPerFunctionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="UnnecessaryLocalVariableJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="redundant.local.variable.display.name" groupKey="group.names.data.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.dataflow.UnnecessaryLocalVariableJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ReuseOfLocalVariableJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="reuse.of.local.variable.display.name" groupKey="group.names.data.flow.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.dataflow.ReuseOfLocalVariableJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="PointlessBitwiseExpressionJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="pointless.bitwise.expression.display.name" groupKey="group.names.bitwise.operation.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.sixrr.inspectjs.bitwise.PointlessBitwiseExpressionJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="ShiftOutOfRangeJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="shift.operation.by.inappropriate.constant.display.name" groupKey="group.names.bitwise.operation.issues" groupBundle="messages.InspectionsBundle"
+                     enabledByDefault="true" level="WARNING" implementationClass="com.sixrr.inspectjs.bitwise.ShiftOutOfRangeJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" suppressId="IncompatibleBitwiseMaskOperation"
+                     shortName="IncompatibleMaskJS"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle" key="incompatible.mask.operation.display.name"
+                     groupKey="group.names.bitwise.operation.issues" groupBundle="messages.InspectionsBundle" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.bitwise.IncompatibleMaskJSInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSMethodCanBeStatic"
+                     bundle="messages.JavaScriptBundle"
+                     key="js.method.can.be.static.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSMethodCanBeStaticInspection"/>
+    <localInspection language="ECMAScript 6" groupPath="JavaScript" shortName="ES6Validation"
+                     key="es6.validation.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="false" level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.inspections.ES6ValidationInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSFileReferences"
+                     key="js.file.references.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.inspections.JSFileReferencesInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSTypeOfValues"
+                     bundle="com.sixrr.inspectjs.InspectionJSBundle"
+                     key="typeof.using.incorrect.case.display.name"
+                     groupKey="group.names.probable.bugs" groupBundle="messages.InspectionsBundle"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.sixrr.inspectjs.control.JSTypeOfValuesInspection"/>
+    <localInspection groupPath="JavaScript" language="JavaScript" displayName="Missing AMD module dependency"
+                     shortName="AmdModulesDependencies" enabledByDefault="true" level="WEAK WARNING"
+                     groupKey="js.inspection.group.name"
+                     implementationClass="com.intellij.lang.javascript.modules.AmdModulesDependenciesInspection"/>
+    <localInspection groupPath="JavaScript" language="JavaScript" displayName="Missing import statement"
+                     shortName="ES6ModulesDependencies" enabledByDefault="true" level="WEAK WARNING"
+                     groupKey="js.inspection.group.name"
+                     implementationClass="com.intellij.lang.javascript.modules.ES6ModulesDependenciesInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSNonASCIINames"
+                     key="non.ascii.identifiers.inspection.name" groupKey="group.names.naming.conventions" groupBundle="messages.InspectionsBundle" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSNonASCIINamesInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSReferencingArgumentsOutsideOfFunction"
+                     key="js.referencing.arguments.outside.of.function.inspection.name" groupName="JavaScript validity issues" enabledByDefault="true"
+                     level="ERROR" implementationClass="com.intellij.lang.javascript.inspections.JSReferencingArgumentsOutsideOfFunctionInspection"/>
+    <localInspection groupPath="JavaScript" language="JavaScript" displayName="Missing module dependency" groupKey="js.inspection.group.name"
+                     shortName="NpmUsedModulesInstalled" enabledByDefault="true" level="WEAK WARNING"
+                     implementationClass="com.intellij.lang.javascript.modules.NpmUsedModulesInstalledInspection"/>
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSUnresolvedExtXType"
+                     key="js.extjs.unresolved.ext.xtype.inspection.name" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.JSUnresolvedExtXTypeInspection"/>
+
+    <!-- TypeScript -->
+    <localInspection language="TypeScript"
+                     shortName="TypeScriptValidateTypes"
+                     key="typescript.validate.types.inspection.name"
+                     enabledByDefault="true"
+                     groupKey="typescript.inspection.group.name"
+                     level="ERROR"
+                     implementationClass="com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection"
+                     unfair="true"/>
+    <localInspection language="TypeScript"
+                     shortName="TypeScriptValidateJSTypes"
+                     key="typescript.validate.types.any.inspection.name"
+                     enabledByDefault="true"
+                     groupKey="typescript.inspection.group.name"
+                     level="WEAK WARNING"
+                     implementationClass="com.intellij.lang.typescript.inspections.TypeScriptValidateJSTypesInspection"
+                     unfair="true"/>
+    <localInspection language="TypeScript"
+                     shortName="TypeScriptUnresolvedVariable"
+                     key="js.unresolved.variable.inspection.name"
+                     enabledByDefault="true"
+                     groupKey="typescript.inspection.group.name"
+                     level="WEAK WARNING"
+                     implementationClass="com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection"
+                     unfair="true"/>
+    <localInspection language="TypeScript"
+                     shortName="TypeScriptCheckImport"
+                     key="typescript.validate.imports.name"
+                     enabledByDefault="true"
+                     level="ERROR"
+                     groupKey="typescript.inspection.group.name"
+                     implementationClass="com.intellij.lang.typescript.inspections.TypeScriptCheckImportInspection"
+                     unfair="true"/>
+    <localInspection language="TypeScript"
+                     shortName="TypeScriptUnresolvedFunction"
+                     key="js.unresolved.function.inspection.name"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     groupKey="typescript.inspection.group.name"
+                     implementationClass="com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection"
+                     unfair="true"/>
+    <localInspection language="TypeScript"
+                     shortName="TypeScriptAccessibilityCheck"
+                     key="js.accessibility.check.inspection.name"
+                     enabledByDefault="true"
+                     groupKey="typescript.inspection.group.name"
+                     level="WEAK WARNING"
+                     unfair="true"
+                     implementationClass="com.intellij.lang.typescript.inspections.TypeScriptAccessibilityCheckInspection"/>
+    <localInspection language="TypeScript"
+                     shortName="TypeScriptPreferShortImport"
+                     key="typescript.prefer.short.import.name"
+                     enabledByDefault="true"
+                     groupKey="typescript.inspection.group.name"
+                     level="WARNING"
+                     implementationClass="com.intellij.lang.typescript.inspection.TypeScriptPreferShortImportInspection"/>
+    <localInspection language="TypeScript"
+                     shortName="TypeScriptUMDGlobal"
+                     key="typescript.reference.to.umd.global"
+                     enabledByDefault="true"
+                     groupKey="typescript.inspection.group.name"
+                     level="WEAK WARNING"
+                     implementationClass="com.intellij.lang.typescript.inspection.TypeScriptUMDGlobalInspection"/>
+    <localInspection language="TypeScript"
+                     shortName="TypeScriptMissingAugmentationImport"
+                     key="typescript.missing.augmentation.import"
+                     enabledByDefault="true"
+                     groupKey="typescript.inspection.group.name"
+                     level="INFORMATION"
+                     implementationClass="com.intellij.lang.typescript.inspection.TypeScriptMissingAugmentationImportInspection"/>
+
+
+    <localInspection language="TypeScript"
+                     shortName="TypescriptExplicitMemberType"
+                     key="typescript.explicit.member.type.inspection.name"
+                     enabledByDefault="true"
+                     groupKey="typescript.inspection.group.name"
+                     level="INFORMATION"
+                     implementationClass="com.intellij.lang.typescript.inspection.TypescriptExplicitMemberTypeInspection"/>
+    
+    <!-- Flow -->
+    <localInspection language="JavaScript"
+                     bundle="messages.JavaScriptBundle"
+                     key="js.flowjs.annotation.inspection.name"
+                     groupPath="JavaScript"
+                     groupKey="js.flowjs.group.name"
+                     enabledByDefault="false"
+                     level="ERROR"
+                     implementationClass="com.intellij.lang.javascript.flow.FlowJSErrorInspection"
+                     unfair="true"/>
+    <localInspection language="Flow JS"
+                     shortName="FlowJSConfig"
+                     bundle="messages.JavaScriptBundle"
+                     groupPath="JavaScript"
+                     key="js.flowjs.config.inspection.name"
+                     groupKey="js.flowjs.group.name"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.flow.FlowJSConfigInspection"/>
+    <localInspection language="Flow JS"
+                     shortName="FlowJSCoverage"
+                     bundle="messages.JavaScriptBundle"
+                     groupPath="JavaScript"
+                     key="js.flowjs.coverage.inspection.name"
+                     groupKey="js.flowjs.group.name"
+                     enabledByDefault="false"
+                     level="WEAK WARNING"
+                     implementationClass="com.intellij.lang.javascript.flow.FlowJSCoverageInspection"/>
+    <localInspection language="Flow JS"
+                     shortName="FlowJSFlagCommentPlacement"
+                     bundle="messages.JavaScriptBundle"
+                     groupPath="JavaScript"
+                     key="js.flowjs.flag.comment.placement.inspection.name"
+                     groupKey="js.flowjs.group.name"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.flow.inspections.FlowJSFlagCommentPlacementInspection"/>
+    <localInspection language="JavaScript" 
+                     shortName="WebpackConfigHighlighting" 
+                     groupPath="JavaScript"
+                     key="js.webpack.config.highlighting.name"
+                     groupKey="js.inspection.group.name"
+                     bundle="messages.JavaScriptBundle"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.frameworks.webpack.WebpackConfigHighlightingInspection"/>
+
+    <intentionAction>
+      <className>com.intellij.lang.javascript.intentions.AnonymousToNamedFunctionIntention</className>
+      <category>JavaScript</category>
+    </intentionAction>
+    <intentionAction>
+      <className>com.intellij.lang.javascript.intentions.JSArrowFunctionToAnonymousIntention</className>
+      <category>JavaScript</category>
+    </intentionAction>
+    <intentionAction>
+      <className>com.intellij.lang.javascript.intentions.JSArrowFunctionToShorthandArrowFunctionIntention</className>
+      <category>JavaScript</category>
+    </intentionAction>
+    <intentionAction>
+      <className>com.intellij.lang.javascript.intentions.JSFunctionToES6ClassIntention</className>
+      <category>JavaScript</category>
+    </intentionAction>
+    <intentionAction>
+      <className>com.intellij.lang.javascript.intentions.JSSplitDeclarationIntention</className>
+      <category>JavaScript</category>
+    </intentionAction>
+    <intentionAction>
+      <className>com.intellij.lang.javascript.intentions.JSSwapMethodCallArgumentsIntention</className>
+      <category>JavaScript</category>
+    </intentionAction>
+    <intentionAction>
+      <className>com.intellij.lang.javascript.intentions.JSConvertParametersToObjectIntention</className>
+      <category>JavaScript</category>
+    </intentionAction>
+    <intentionAction>
+      <className>com.intellij.lang.javascript.intentions.JSConvertToForEachIntention</className>
+      <category>JavaScript</category>
+    </intentionAction>
+    <intentionAction>
+      <className>com.intellij.lang.typescript.intentions.TypeScriptGenerateReferencePathIntention</className>
+      <category>TypeScript</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>com.intellij.lang.javascript.intentions.JSCreateGetterIntention</className>
+      <category>JavaScript</category>
+    </intentionAction>
+    <intentionAction>
+      <className>com.intellij.lang.javascript.intentions.JSCreateSetterIntention</className>
+      <category>JavaScript</category>
+    </intentionAction>
+    <intentionAction>
+    <className>com.intellij.lang.javascript.intentions.JSCreateGetterAndSetterIntention</className>
+    <category>JavaScript</category>
+    </intentionAction>
+    <intentionAction>
+      <className>com.intellij.lang.javascript.intentions.TypeScriptPublicModifierIntention</className>
+      <category>TypeScript</category>
+    </intentionAction>
+    <intentionAction>
+      <className>com.intellij.lang.javascript.intentions.TypeScriptPrivateModifierIntention</className>
+      <category>TypeScript</category>
+    </intentionAction>
+    <intentionAction>
+      <className>com.intellij.lang.javascript.intentions.TypeScriptProtectedModifierIntention</className>
+      <category>TypeScript</category>
+    </intentionAction>
+    <intentionAction>
+      <className>com.intellij.lang.javascript.intentions.JSQuotedStringToTemplateStringIntention</className>
+      <category>JavaScript</category>
+    </intentionAction>
+    <intentionAction>
+      <className>com.intellij.lang.javascript.intentions.JSStringTemplateConvertToMultiLineIntention</className>
+      <category>JavaScript</category>
+    </intentionAction>
+    <intentionAction>
+      <className>com.intellij.lang.javascript.intentions.JSStringTemplateConvertToVisibleSeparatorsIntention</className>
+      <category>JavaScript</category>
+    </intentionAction>
+    <intentionAction>
+      <className>com.intellij.lang.javascript.inspections.ES6ConvertForEachToForOfIntention</className>
+      <category>JavaScript</category>
+    </intentionAction>
+
+    <spellchecker.support language="JavaScript" implementationClass="com.intellij.lang.javascript.highlighting.JSSpellcheckingStrategy"/>
+    <spellchecker.support language="JSON" order="first"
+                          implementationClass="com.intellij.lang.javascript.highlighting.PackageJsonSpellcheckingStrategy"/>
+    <spellchecker.support language="JSON" order="first"
+                          implementationClass="com.intellij.lang.javascript.linter.jshint.JSHintConfigSpellcheckingStrategy"/>
+
+    <daemon.changeLocalityDetector implementation="com.intellij.lang.javascript.inspections.JSCommentAnalyzeSupport"/>
+
+    <directoryProjectGenerator implementation="com.intellij.lang.javascript.boilerplate.Html5BoilerplateProjectGenerator"/>
+    <directoryProjectGenerator implementation="com.intellij.lang.javascript.boilerplate.WebStarterKitProjectGenerator"/>
+    <directoryProjectGenerator implementation="com.intellij.lang.javascript.frameworks.react.ReactCreateAppProjectGenerator"/>
+    <directoryProjectGenerator implementation="com.intellij.lang.javascript.boilerplate.TwitterBootstrapProjectGenerator"/>
+    <directoryProjectGenerator implementation="com.intellij.lang.javascript.boilerplate.FoundationProjectGenerator"/>
+
+    <projectTemplatesFactory implementation="com.intellij.lang.javascript.boilerplate.JavascriptTemplatesFactory"/>
+    <!--<directoryProjectGenerator implementation="com.intellij.lang.javascript.boilerplate.KickstrapGithubProjectGenerator"/>-->
+
+    <iconProvider implementation="com.intellij.lang.javascript.ui.JSFileIconProvider"/>
+    <defaultHighlightingSettingProvider implementation="com.intellij.lang.javascript.validation.JSDefaultHighlightingSettingProvider"
+                                        order="before GeneratedSourcesHighlightingSettingProvider"/>
+    <generatedSourcesFilter implementation="com.intellij.lang.javascript.validation.JSMinifiedFilesFilter"/>
+    <lang.fileViewProviderFactory language="JavaScript" implementationClass="com.intellij.lang.javascript.JSFileViewProviderFactory" />
+
+    <searchScopeEnlarger implementation="com.intellij.lang.javascript.psi.resolve.JSProjectScopeEnlarger"/>
+
+    <applicationService serviceInterface="com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory"
+                        serviceImplementation="com.intellij.lang.javascript.flex.XmlBackedJSClassFactoryImpl"/>
+
+    <!-- Settings -->
+    <projectService serviceInterface="com.intellij.lang.javascript.settings.JSRootConfiguration"
+                    serviceImplementation="com.intellij.lang.javascript.settings.JSRootConfigurationImpl"/>
+    <applicationService serviceInterface="com.intellij.lang.javascript.settings.JSApplicationSettings"
+                        serviceImplementation="com.intellij.lang.javascript.settings.JSApplicationSettings"/>
+    <autoImportOptionsProvider instance="com.intellij.lang.typescript.settings.TypeScriptAutoImportOptionsProvider"/>
+
+    <projectService serviceImplementation="com.intellij.lang.typescript.settings.exclude.TypeScriptGeneratedFilesManager"/>
+
+    <applicationService serviceImplementation="com.intellij.javascript.nodejs.NodeLocalVersionsManager"/>
+    <projectService serviceImplementation="com.intellij.javascript.nodejs.library.NodeJsCoreLibraryManager"/>
+    <applicationService serviceImplementation="com.intellij.lang.javascript.modules.PackageJsonDocumentDependencies"/>
+    <applicationService serviceInterface="com.intellij.lang.javascript.modules.NpmPackageInstallerLight"
+                        serviceImplementation="com.intellij.lang.javascript.modules.PackageInstaller$Component"/>
+    <projectService serviceImplementation="com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager"/>
+    <applicationService serviceImplementation="com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreterManager"/>
+    <projectService serviceImplementation="com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager"/>
+    <directoryIndexExcludePolicy implementation="com.intellij.javascript.nodejs.library.NodeModulesExcludePolicy"/>
+    <additionalLibraryRootsProvider implementation="com.intellij.javascript.nodejs.library.NodeModulesRootsProvider"/>
+    <projectViewNodeDecorator implementation="com.intellij.javascript.nodejs.library.NodeModulesDirectoryDecorator"/>
+    <iconProvider implementation="com.intellij.javascript.nodejs.library.NodeModulesDirectoryIconProvider" order="before directory"/>
+
+    <!-- Bower -->
+    <projectConfigurable id="Settings.JavaScript.Bower"
+                         parentId="Settings.JavaScript"
+                         instance="com.intellij.lang.javascript.bower.BowerConfigurable"
+                         key="settings.javascript.bower.configurable.name"
+                         bundle="messages.JavaScriptBundle"
+                         order="after Settings.JavaScript.Templates"/>
+    <projectService serviceInterface="com.intellij.lang.javascript.bower.BowerSettingsManager"
+                    serviceImplementation="com.intellij.lang.javascript.bower.BowerSettingsManager"/>
+    <projectService serviceInterface="com.intellij.lang.javascript.bower.BowerPackagingService"
+                    serviceImplementation="com.intellij.lang.javascript.bower.BowerPackagingService"/>
+    <fileTypeFactory implementation="com.intellij.lang.javascript.bower.BowerRCFileTypeFactory"/>
+    <completion.contributor language="JSON" implementationClass="com.intellij.lang.javascript.bower.BowerCompletionContributor"/>
+    <spellchecker.support language="JSON" order="first" implementationClass="com.intellij.lang.javascript.bower.BowerConfigFileSpellcheckingStrategy"/>
+
+    <liveTemplateContext implementation="com.intellij.lang.javascript.ecmascript6.TypeScriptTemplateContextType"/>
+
+    <structuralsearch.profile implementation="com.intellij.structuralsearch.JSStructuralSearchProfile"/>
+
+    <!--testing mode-->
+    <structuralsearch.profile implementation="com.intellij.structuralsearch.extenders.JSStructuralSearchProfile2" order="last"/>
+    <lang.refactoringSupport language="JavaScript"
+                             implementationClass="com.intellij.lang.typescript.refactoring.TypeScriptRefactoringSupportProvider"/>
+    <colorSettingsPage implementation="com.intellij.lang.javascript.highlighting.TypeScriptColorSettingsPage"/>
+    <annotator language="JavaScript" implementationClass="com.intellij.lang.javascript.frameworks.react.JSXLanguageLevelAnnotator"/>
+    <xml.zenCodingGenerator implementation="com.intellij.lang.javascript.frameworks.react.JSXZenCodingGenerator"/>
+    <applicationService serviceImplementation="com.intellij.lang.javascript.frameworks.react.JSXEmmetOptions"/>
+
+    <xml.xmlSuppressionProvider implementation="com.intellij.lang.javascript.frameworks.react.JSXInspectionFilter"/>
+    <psi.referenceContributor language="JSON" implementation="com.intellij.lang.typescript.tsconfig.TypeScriptConfigJsonReferenceContributor"/>
+    <useScopeOptimizer implementation="com.intellij.lang.typescript.compiler.TypeScriptGeneratedFilesUseScopeOptimizer"/>
+    <referencesSearch implementation="com.intellij.lang.ecmascript6.findUsages.ES6ImportAliasReferenceSearcher"/>
+    <xml.elementDescriptorProvider order="first" implementation="com.intellij.lang.javascript.frameworks.react.ReactXmlElementDescriptorProvider"/>
+    <gotoRelatedProvider implementation="com.intellij.lang.javascript.navigation.JavaScriptRelatedProvider"/>
+    <lang.importOptimizer language="JavaScript" implementationClass="com.intellij.lang.typescript.imports.ES6ImportOptimizer"/>
+    <lang.importOptimizer language="JavaScript" implementationClass="com.intellij.lang.typescript.imports.FlowImportOptimizer"/>
+
+    <completion.contributor language="JavaScript"
+                            implementationClass="com.intellij.lang.javascript.frameworks.react.ReactXmlAttributeCompletionContributor"
+                            order="before xmlNonFirst"/>
+    <completion.contributor language="TypeScript JSX"
+                            implementationClass="com.intellij.lang.javascript.frameworks.react.ReactXmlAttributeCompletionContributor"
+                            order="before xmlNonFirst"/>
+
+    <!-- webpack -->
+    <psi.fileReferenceHelper implementation="com.intellij.lang.javascript.frameworks.webpack.WebpackFileReferenceHelper"/>
+
+    <implicitUsageProvider implementation="com.intellij.lang.javascript.frameworks.react.ReactImplicitUsageProvider"/>
+    <directoryIndexExcludePolicy implementation="com.intellij.lang.typescript.settings.exclude.TypeScriptGeneratedFilesExcludePolicy"/>
+    <postStartupActivity implementation="com.intellij.lang.typescript.settings.exclude.TypeScriptGeneratedFilesStartupActivity"/>
+    <nonProjectFileWritingAccessExtension implementation="com.intellij.lang.typescript.settings.exclude.TypeScriptGeneratedFilesWriteAccess"/>
+    <gotoFileContributor implementation="com.intellij.lang.typescript.settings.exclude.TypeScriptGeneratedFilesNamesContributor"/>
+    <indexedRootsProvider implementation="com.intellij.lang.typescript.library.TypeScriptLibraryIndexableSetContributor"/>
+    <fileBasedIndex implementation="com.intellij.lang.javascript.index.ES6ImportIndex"/>
+    <directoryProjectConfigurator implementation="com.intellij.javascript.JSLanguageLevelGuesser"/>
+    <gotoDeclarationHandler implementation="com.intellij.lang.typescript.TypeScriptGoToDeclarationHandler"/>
+    <colorProvider implementation="com.intellij.lang.javascript.frameworks.react.JSXColorProvider"/>
+    <psi.fileReferenceHelper implementation="com.intellij.lang.javascript.actions.JSFileFromImportsHelper"/>
+    <predefinedCodeStyle id="standardjs" implementation="com.intellij.lang.javascript.formatter.StandardJSCodeStyle"/>
+    <predefinedCodeStyle implementation="com.intellij.lang.javascript.formatter.JSGoogleCodeStyle"/>
+    <postFormatProcessor implementation="com.intellij.lang.javascript.formatter.JSEnforceCodeStylePostProcessor"/>
+    <search.optionContributor implementation="com.intellij.lang.javascript.frameworks.react.JSXSearchableOptionContributor"/>
+
+    <completion.contributor order="first" language="JavaScript"
+                            implementationClass="com.jetbrains.jsonSchema.ide.JsonSchemaCompletionContributor"/>
+    <lang.documentationProvider language="JavaScript" implementationClass="com.jetbrains.jsonSchema.ide.JsonSchemaDocumentationProvider" order="first"/>
+    <annotator language="JavaScript" implementationClass="com.jetbrains.jsonSchema.ide.JsonSchemaAnnotator"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="JavaScript">
+    <predefinedLibraryProvider implementation="com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider"/>
+    <predefinedLibraryProvider implementation="com.intellij.javascript.nodejs.library.NodeModulesLibraryProvider"/>
+    <iconProvider language="ECMA Script Level 4"
+                  implementationClass="com.intellij.lang.javascript.psi.ecmal4.impl.JSIconProvider$ASIconProvider"/>
+    <iconProvider language="TypeScript"
+                  implementationClass="com.intellij.lang.javascript.psi.ecmal4.impl.JSIconProvider$TypeScriptIconProvider"/>
+    <spellcheckerProvider implementation="com.intellij.lang.javascript.linter.JSDirectiveCommentSpellcheckerProvider"/>
+    <elementScopeProvider language="JavaScript"
+                          implementationClass="com.intellij.lang.javascript.psi.resolve.JavaScriptResolveScopeProvider"/>
+    <elementScopeProvider language="TypeScript"
+                          implementationClass="com.intellij.lang.javascript.ecmascript6.TypeScriptResolveScopeProvider"/>
+
+    <xmlBackedClassProvider implementation="com.intellij.lang.javascript.frameworks.mozilla.XulJSClassProvider"/>
+    <frameworkIndexingHandler implementation="com.intellij.lang.javascript.frameworks.qxdoo.QxDooFrameworkHandler"/>
+    <frameworkIndexingHandler implementation="com.intellij.lang.javascript.frameworks.extjs.Ext4FrameworkHandler"/>
+    <frameworkIndexingHandler implementation="com.intellij.lang.javascript.frameworks.jquery.JQueryFrameworkIndexingHandler"/>
+    <frameworkIndexingHandler implementation="com.intellij.lang.javascript.frameworks.dojo.DojoFrameworkIndexingHandler"/>
+    <frameworkIndexingHandler implementation="com.intellij.lang.javascript.frameworks.mootools.MooToolsIndexingHandler"/>
+    <frameworkIndexingHandler implementation="com.intellij.lang.javascript.frameworks.react.ReactFrameworkIndexingHandler"/>
+    <frameworkIndexingHandler implementation="com.intellij.lang.javascript.frameworks.amd.JSAmdIndexingHandler"/>
+    <frameworkIndexingHandler implementation="com.intellij.lang.javascript.frameworks.backbone.BackboneJSIndexingHandler"/>
+    <frameworkIndexingHandler implementation="com.intellij.lang.javascript.frameworks.systemjs.SystemJSIndexingHandler"/>
+    <frameworkIndexingHandler implementation="com.intellij.lang.javascript.frameworks.modules.JSRequireFrameworkIndexHandler"/>
+    <dialectSpecificHandlersFactory language="TypeScript"
+                                    implementationClass="com.intellij.lang.javascript.ecmascript6.TypeScriptSpecificHandlersFactory"/>
+    <handlersFactory language="TypeScript" implementationClass="com.intellij.lang.typescript.TypeScriptHandlersFactory"/>
+    <dialectSpecificHandlersFactory language="JavaScript"
+                                    implementationClass="com.intellij.lang.javascript.JavaScriptSpecificHandlersFactory"/>
+    <dialectSpecificHandlersFactory language="ECMAScript 6" implementationClass="com.intellij.lang.ecmascript6.ES6SpecificHandlersFactory"/>
+    <handlersFactory language="ECMAScript 6" implementationClass="com.intellij.lang.ecmascript6.ES6HandlersFactory"/>
+    <dialectSpecificHandlersFactory language="JSX Harmony"
+                                    implementationClass="com.intellij.lang.javascript.frameworks.react.JSXSpecificHandlersFactory"/>
+    <dialectSpecificHandlersFactory language="Flow JS"
+                                    implementationClass="com.intellij.lang.javascript.flow.FlowJSSpecificHandlersFactory"/>
+    <handlersFactory language="Flow JS" implementationClass="com.intellij.javascript.flow.FlowJSHandlersFactory"/>
+    <resolveHelper implementation="com.intellij.lang.javascript.ecmascript6.TypeScriptResolveHelper"/>
+    <refactoringFilterProvider language="TypeScript"
+                               implementationClass="com.intellij.lang.typescript.refactoring.TypeScriptRefactoringFilterProvider"/>
+
+    <textAttributesKeyProvider language="TypeScript" implementationClass="com.intellij.lang.javascript.highlighting.TypeScriptAttributeKeysProvider"/>
+
+    <smartCompletionContributor language="JavaScript"
+                                implementationClass="com.intellij.lang.javascript.completion.JSSmartCompletionContributor"/>
+    <smartCompletionContributor language="TypeScript"
+                                implementationClass="com.intellij.lang.typescript.completion.TypeScriptSmartCompletionContributor"/>
+    <TypeScriptAnnotatorCheckerProvider
+        order="first"
+        implementation="com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceAnnotatorCheckerProvider"/>
+    <completionHelper implementation="com.intellij.lang.javascript.frameworks.json.JsonCompletionHelper"/>
+    <moduleReferenceContributor implementation="com.intellij.lang.javascript.frameworks.modules.JSDefaultModuleReferenceContributor"/>
+    <moduleReferenceContributor implementation="com.intellij.lang.typescript.modules.TypeScriptModuleReferenceContributor"/>
+    <moduleReferenceContributor implementation="com.intellij.lang.typescript.modules.TypeScriptNodeModulesReferenceContributor"/>
+    <moduleReferenceContributor implementation="com.intellij.lang.typescript.modules.TypeScriptPathMappingReferenceContributor"/>
+    <moduleReferenceContributor implementation="com.intellij.lang.javascript.frameworks.systemjs.SystemJSReferenceContributor"/>
+
+    <analysisHandlersFactory language="TypeScript" implementationClass="com.intellij.lang.javascript.ecmascript6.TypeScriptAnalysisHandlersFactory"/>
+    <analysisHandlersFactory language="ECMAScript 6" implementationClass="com.intellij.lang.ecmascript6.validation.ES6AnalysisHandlersFactory"/>
+    <analysisHandlersFactory language="Flow JS" implementationClass="com.intellij.lang.javascript.frameworks.flow.validation.FlowJSAnalysisHandlersFactory"/>
+    <JsonSchema.ProviderFactory implementation="com.intellij.lang.javascript.JavaScriptJsonSchemaProviderFactory"/>
+    <JsonSchema.ProviderFactory implementation="com.intellij.lang.javascript.frameworks.webpack.WebpackInJavaScriptJsonSchemaProviderFactory"/>
+
+    <FlowJSAnnotatorCheckerProvider implementation="com.intellij.lang.javascript.flow.FlowJSAnnotatorCheckerProviderImpl"/>
+    <LanguageServiceProvider implementation="com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceProvider"/>
+  </extensions>
+  <extensions defaultExtensionNs="Json">
+    <Like.Psi.Walker.Factory implementation="com.intellij.lang.javascript.json.JSJsonLikePsiWalkerFactory"/>
+  </extensions>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="JavaScript.resolveHelper" interface="com.intellij.lang.javascript.flex.JSResolveHelper"/>
+    <extensionPoint qualifiedName="JavaScript.classInheritorsProvider"
+                    interface="com.intellij.lang.javascript.search.JSClassInheritorsProvider"/>
+    <extensionPoint qualifiedName="JavaScript.conditionalCompilationDefinitionsProvider"
+                    interface="com.intellij.lang.javascript.JSConditionalCompilationDefinitionsProvider"/>
+    <extensionPoint qualifiedName="JavaScript.predefinedLibraryProvider"
+                    interface="com.intellij.lang.javascript.library.JSPredefinedLibraryProvider"/>
+    <extensionPoint qualifiedName="JavaScript.predefinedLibraryFilesConverter"
+                    interface="com.intellij.lang.javascript.library.JSPredefinedLibraryFilesConverter"/>
+    <extensionPoint qualifiedName="JavaScript.indexedFileTypeProvider"
+                    interface="com.intellij.lang.javascript.index.IndexedFileTypeProvider"/>
+    <extensionPoint qualifiedName="JavaScript.inheritedLanguagesConfigurableProvider" beanClass="com.intellij.lang.LanguageExtensionPoint">
+      <with attribute="implementationClass" implements="com.intellij.lang.javascript.psi.JSInheritedLanguagesConfigurableProvider"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="JavaScript.intentionAndInspectionFilter" beanClass="com.intellij.lang.LanguageExtensionPoint">
+      <with attribute="implementationClass" implements="com.intellij.lang.javascript.highlighting.IntentionAndInspectionFilter"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="JavaScript.textAttributesKeyProvider" beanClass="com.intellij.lang.LanguageExtensionPoint">
+      <with attribute="implementationClass" implements="com.intellij.lang.javascript.highlighting.JSTextAttributeKeysProvider"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="JavaScript.refactoringFilterProvider" beanClass="com.intellij.lang.LanguageExtensionPoint">
+      <with attribute="implementationClass" implements="com.intellij.lang.javascript.refactoring.JSRefactoringFilterProvider"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="JavaScript.contextTypeFilter" beanClass="com.intellij.lang.LanguageExtensionPoint">
+      <with attribute="implementationClass" implements="com.intellij.lang.javascript.JSContextTypeFilter"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="JavaScript.iconProvider" beanClass="com.intellij.lang.LanguageExtensionPoint">
+      <with attribute="implementationClass" implements="com.intellij.lang.javascript.psi.ecmal4.impl.JSIconProvider"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="JavaScript.introduceParameterHandler" beanClass="com.intellij.lang.LanguageExtensionPoint">
+      <with attribute="implementationClass"
+            implements="com.intellij.lang.javascript.refactoring.introduceParameter.JSIntroduceParameterHandler"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="JavaScript.spellcheckerProvider"
+                    interface="com.intellij.lang.javascript.highlighting.JSSpellcheckerProvider"/>
+    <extensionPoint qualifiedName="JavaScript.smartCompletionContributor" beanClass="com.intellij.lang.LanguageExtensionPoint">
+      <with attribute="implementationClass" implements="com.intellij.lang.javascript.completion.JSSmartCompletionContributor"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="JavaScript.elementScopeProvider" beanClass="com.intellij.lang.LanguageExtensionPoint">
+      <with attribute="implementationClass" implements="com.intellij.lang.javascript.psi.resolve.JSElementResolveScopeProvider"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="JavaScript.xmlBackedClassProvider"
+                    interface="com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassProvider"/>
+    <extensionPoint qualifiedName="JavaScript.frameworkIndexingHandler"
+                    interface="com.intellij.lang.javascript.index.FrameworkIndexingHandler"/>
+    <extensionPoint qualifiedName="JavaScript.dialectSpecificHandlersFactory" beanClass="com.intellij.lang.LanguageExtensionPoint">
+      <with attribute="implementationClass" implements="com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="JavaScript.handlersFactory" beanClass="com.intellij.lang.LanguageExtensionPoint">
+      <with attribute="implementationClass" implements="com.intellij.lang.javascript.dialects.JSHandlersFactory"/>
+    </extensionPoint>
+
+    <extensionPoint qualifiedName="JavaScript.lang.templates"
+                    beanClass="com.intellij.openapi.options.ConfigurableEP"
+                    area="IDEA_PROJECT">
+      <with attribute="instanceClass" implements="com.intellij.openapi.options.Configurable"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="JavaScript.indexedFilesFilter"
+                    interface="com.intellij.lang.javascript.index.JSIndexedFilesFilterProvider"/>
+    <extensionPoint qualifiedName="JavaScript.completionHelper"
+                    interface="com.intellij.lang.javascript.completion.JSCompletionHelper"/>
+
+    <extensionPoint qualifiedName="JavaScript.TypeScriptAnnotatorCheckerProvider"
+                    interface="com.intellij.lang.javascript.ecmascript6.TypeScriptAnnotatorCheckerProvider"
+                    area="IDEA_PROJECT"/>
+
+    <extensionPoint qualifiedName="JavaScript.LanguageServiceFilter"
+                    interface="com.intellij.lang.javascript.service.highlighting.JSLanguageServiceFilter"
+                    area="IDEA_PROJECT"/>
+
+    <extensionPoint qualifiedName="JavaScript.LanguageServiceProvider"
+                    interface="com.intellij.lang.javascript.service.JSLanguageServiceProvider"
+                    area="IDEA_PROJECT"/>
+
+    <extensionPoint qualifiedName="JavaScript.FlowJSAnnotatorCheckerProvider"
+                    interface="com.intellij.lang.javascript.frameworks.flow.validation.FlowJSAnnotatorCheckerProvider">
+    </extensionPoint>
+
+    <extensionPoint qualifiedName="JavaScript.JSImplicitElementsIndexFileTypeProvider"
+                    interface="com.intellij.lang.javascript.index.JSImplicitElementsIndexFileTypeProvider"/>
+    <extensionPoint qualifiedName="JavaScript.moduleReferenceContributor"
+                    interface="com.intellij.lang.javascript.psi.resolve.JSModuleReferenceContributor"/>
+    <extensionPoint qualifiedName="JavaScript.remoteInterpreterManager"
+                    interface="com.intellij.javascript.nodejs.NodeJSRemoteInterpreterManager"/>
+    <extensionPoint qualifiedName="JavaScript.analysisHandlersFactory" beanClass="com.intellij.lang.LanguageExtensionPoint">
+      <with attribute="implementationClass" implements="com.intellij.lang.javascript.JSAnalysisHandlersFactory"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="NodeJS.runConfigurationLocationFilter" interface="com.intellij.javascript.nodejs.execution.NodeRunConfigurationLocationFilter"/>
+    <extensionPoint qualifiedName="com.intellij.JavaScript.linter.descriptor" interface="com.intellij.lang.javascript.linter.JSLinterDescriptor"/>
+    <extensionPoint qualifiedName="com.intellij.javascript.module.provider" interface="com.intellij.lang.javascript.modules.diagramm.JSModuleConnectionProvider"/>
+  </extensionPoints>
+
+  <application-components>
+    <component>
+      <implementation-class>com.intellij.javascript.JSSupportLoader</implementation-class>
+    </component>
+  </application-components>
+
+  <project-components>
+    <component>
+      <implementation-class>com.intellij.lang.javascript.index.JavaScriptIndex</implementation-class>
+    </component>
+    <component>
+      <implementation-class>com.intellij.lang.typescript.compiler.TypeScriptServiceHighlightingPassFactory</implementation-class>
+    </component>
+    <component>
+      <implementation-class>com.intellij.lang.javascript.validation.JSSemanticKeywordHighlighterFactory</implementation-class>
+    </component>
+    <component>
+      <implementation-class>com.intellij.lang.javascript.linter.JSLinterEditorPanelCreator</implementation-class>
+      <skipForDefaultProject/>
+    </component>
+  </project-components>
+
+  <actions>
+    <group id="JSClassHierarchyPopupMenu">
+      <reference ref="TypeHierarchyBase.BaseOnThisType"/>
+      <separator/>
+      <reference ref="TypeHierarchy.Class"/>
+      <reference ref="TypeHierarchy.Subtypes"/>
+      <reference ref="TypeHierarchy.Supertypes"/>
+      <separator/>
+      <reference ref="EditSource"/>
+      <separator/>
+      <reference ref="FindUsages"/>
+      <reference ref="RefactoringMenu"/>
+      <separator/>
+      <reference ref="AddToFavorites"/>
+      <separator/>
+      <reference ref="RunContextPopupGroup"/>
+      <separator/>
+      <reference ref="ReformatCode"/>
+      <reference ref="OptimizeImports"/>
+      <reference ref="$Delete"/>
+      <separator/>
+      <reference ref="VersionControlsGroup"/>
+      <separator/>
+      <reference ref="ExternalToolsGroup"/>
+      <separator/>
+      <reference ref="CompareTwoFiles"/>
+      <reference ref="CompareFileWithEditor"/>
+    </group>
+
+    <group id="JSHierarchyPopupMenu">
+      <action id="BaseOnThisFunction" text="Base on This Function"
+              class="com.intellij.lang.javascript.hierarchy.type.jsfunction.JSFunctionHierarchyBrowser$BaseOnThisFunctionAction"
+              use-shortcut-of="TypeHierarchy"/>
+      <reference ref="TypeHierarchy.Class"/>
+      <reference ref="TypeHierarchy.Subtypes"/>
+      <reference ref="TypeHierarchy.Supertypes"/>
+      <separator/>
+      <reference ref="EditSource"/>
+      <separator/>
+      <reference ref="FindUsages"/>
+      <reference ref="RefactoringMenu"/>
+      <separator/>
+      <reference ref="AddToFavorites"/>
+      <separator/>
+      <reference ref="RunContextPopupGroup"/>
+      <separator/>
+      <reference ref="ReformatCode"/>
+      <reference ref="OptimizeImports"/>
+      <reference ref="$Delete"/>
+      <separator/>
+      <reference ref="VersionControlsGroup"/>
+      <separator/>
+      <reference ref="ExternalToolsGroup"/>
+      <separator/>
+      <reference ref="CompareTwoFiles"/>
+      <reference ref="CompareFileWithEditor"/>
+    </group>
+
+
+    <group id="JSMethodHierarchyPopupMenu">
+      <!--
+      <action id="JSMethodHierarchy.ImplementMethodAction" class="com.intellij.lang.javascript.hierarchy.method.JSImplementMethodAction"/>
+      <action id="JSMethodHierarchy.OverrideMethodAction" class="com.intellij.lang.javascript.hierarchy.method.JSOverrideMethodAction"/>
+      <separator/>
+      -->
+      <action id="JSMethodHierarchy.BaseOnThisMethod" text="Base on This Method"
+              class="com.intellij.ide.hierarchy.MethodHierarchyBrowserBase$BaseOnThisMethodAction"
+              use-shortcut-of="MethodHierarchy"/>
+      <reference ref="EditSource"/>
+      <separator/>
+      <reference ref="FindUsages"/>
+      <reference ref="RefactoringMenu"/>
+      <separator/>
+      <reference ref="AddToFavorites"/>
+      <separator/>
+      <reference ref="RunContextPopupGroup"/>
+      <separator/>
+      <reference ref="ReformatCode"/>
+      <reference ref="OptimizeImports"/>
+      <separator/>
+      <reference ref="VersionControlsGroup"/>
+      <separator/>
+      <reference ref="ExternalToolsGroup"/>
+      <separator/>
+      <reference ref="CompareTwoFiles"/>
+      <reference ref="CompareFileWithEditor"/>
+    </group>
+
+    <group id="JSCallHierarchyPopupMenu">
+      <action id="JSCallHierarchy.BaseOnThisMethod" text="Base on This Method"
+              class="com.intellij.ide.hierarchy.CallHierarchyBrowserBase$BaseOnThisMethodAction"
+              use-shortcut-of="CallHierarchy"/>
+      <reference ref="EditSource"/>
+      <separator/>
+      <reference ref="FindUsages"/>
+      <reference ref="RefactoringMenu"/>
+      <separator/>
+      <reference ref="AddToFavorites"/>
+      <separator/>
+      <reference ref="RunContextPopupGroup"/>
+      <separator/>
+      <reference ref="ReformatCode"/>
+      <reference ref="OptimizeImports"/>
+      <separator/>
+      <reference ref="VersionControlsGroup"/>
+      <separator/>
+      <reference ref="ExternalToolsGroup"/>
+      <separator/>
+      <reference ref="CompareTwoFiles"/>
+      <reference ref="CompareFileWithEditor"/>
+    </group>
+
+    <group id="Editor.JSLibrariesMenu" description="Select JavaScript libraries to be used with the current file" popup="true"
+           text="Use JavaScript Library"
+           icon="JavaScriptLanguageIcons.Library.JsLibrary"
+           class="com.intellij.lang.javascript.library.ui.JSLibrariesMenuGroup">
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+    </group>
+
+    <group id="Editor.JSLibrariesMenu.LibraryList" class="com.intellij.lang.javascript.library.ui.JSLibraryListGroup" text="Use Library"
+           description="Set Used JS Libraries" icon="JavaScriptLanguageIcons.Library.JsLibrary">
+      <add-to-group group-id="Editor.JSLibrariesMenu" anchor="last"/>
+    </group>
+
+    <action id="Generate.Fields.TypeScript" class="com.intellij.lang.javascript.generation.TypeScriptGenerateFieldsAction"
+            text="Implement Fields...">
+      <add-to-group anchor="after" relative-to-action="Generate.TearDown.Actionscript" group-id="GenerateGroup"/>
+    </action>
+
+    <action id="Generate.Constructor.JavaScript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateConstructorAction"
+            text="Constructor">
+      <add-to-group anchor="after" relative-to-action="Generate.Fields.TypeScript" group-id="GenerateGroup"/>
+    </action>
+
+    <action id="Generate.GetAccessor.JavaScript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateGetAccessorAction"
+            text="Getter">
+      <add-to-group anchor="after" relative-to-action="Generate.Constructor.JavaScript" group-id="GenerateGroup"/>
+    </action>
+    <action id="Generate.SetAccessor.JavaScript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateSetAccessorAction"
+            text="Setter">
+      <add-to-group anchor="after" relative-to-action="Generate.GetAccessor.JavaScript" group-id="GenerateGroup"/>
+    </action>
+    <action id="Generate.GetSetAccessor.JavaScript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateGetSetAccessorAction"
+            text="Getter and Setter">
+      <add-to-group anchor="after" relative-to-action="Generate.SetAccessor.JavaScript" group-id="GenerateGroup"/>
+    </action>
+
+    <action id="NewJavaScriptFile" class="com.intellij.lang.javascript.actions.CreateJavaScriptFileAction">
+      <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
+    </action>
+
+    <action id="NewTypeScriptFile" class="com.intellij.lang.javascript.actions.CreateTypeScriptFileAction">
+      <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
+    </action>
+
+    <action id="NewTypeScriptConfigFile" class="com.intellij.lang.javascript.actions.TypeScriptCreateConfigFileAction">
+      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewTypeScriptFile"/>
+    </action>
+
+    <action id="JS.TypeScript.Compile" class="com.intellij.lang.typescript.compiler.action.TypeScriptCompileAllAction" text="TypeScript Compile all" description="Compile all project files"/>
+    <action id="JS.TypeScript.Compile.Current" class="com.intellij.lang.typescript.compiler.action.TypeScriptCompileCurrentAction" text="TypeScript Compile" description="Compile current file or directory">
+
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+
+    </action>
+
+    <action id="ES6.Generate.Index"
+            class="com.intellij.lang.ecmascript6.actions.ES6GenerateIndexAction"/>
+
+    <action class="com.intellij.lang.javascript.linter.jscs.JscsFixAction" id="Javascript.Linters.JSCS.Fix">
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+    </action>
+
+    <action class="com.intellij.lang.javascript.linter.jscs.EsLintFixAction" id="Javascript.Linters.EsLint.Fix">
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+    </action>
+
+    <action class="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSFixAction" id="Javascript.Linters.StandardJS.Fix">
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+    </action>
+
+  </actions>
+</idea-plugin>

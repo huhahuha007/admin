@@ -1,0 +1,3 @@
+function m(arg) {
+    <spot>arg</spot>$key
+}

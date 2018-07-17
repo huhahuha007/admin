@@ -20,7 +20,7 @@ class ArticleController extends CommonController {
 
     public function index() {
             
-        }
+    }
 
     //文章分类列表
     public function sort() {

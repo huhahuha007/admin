@@ -1,0 +1,5 @@
+function m(arg) {
+    if(arg == null) {
+        <spot>new Error('arg null')</spot>$key
+    }
+}

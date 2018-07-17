@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <diagram.Provider implementation="com.intellij.lang.javascript.modules.diagramm.JSModulesDiagramProvider"/>
+    <postStartupActivity implementation="com.intellij.lang.javascript.WebStormDiagramsConfigurator"/>
+  </extensions>
+</idea-plugin>

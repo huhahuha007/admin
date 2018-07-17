@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <copyright.updater filetype="JavaScript" implementationClass="com.intellij.lang.javascript.copyright.JSUpdateCopyrightsProvider"/>
+    <copyright.updater filetype="ActionScript" implementationClass="com.intellij.lang.javascript.copyright.JSUpdateCopyrightsProvider"/>
+    <copyright.updater filetype="TypeScript" implementationClass="com.intellij.lang.javascript.copyright.JSUpdateCopyrightsProvider"/>
+    <copyright.updater filetype="TypeScript JSX" implementationClass="com.intellij.lang.javascript.copyright.JSUpdateCopyrightsProvider"/>
+    <copyright.updater filetype="ECMAScript 6" implementationClass="com.intellij.lang.javascript.copyright.JSUpdateCopyrightsProvider"/>
+    <copyright.updater filetype="JSX Harmony" implementationClass="com.intellij.lang.javascript.copyright.JSUpdateCopyrightsProvider"/>
+  </extensions>
+</idea-plugin>

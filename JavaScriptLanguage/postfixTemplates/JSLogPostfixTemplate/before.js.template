@@ -1,0 +1,4 @@
+function m(id) {
+    var el = document.getElementById(id);
+    <spot>'element: ' + el</spot>$key
+}

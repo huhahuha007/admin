@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<idea-plugin>
+  <depends>com.intellij.css</depends>
+  <extensions defaultExtensionNs="com.intellij">
+    <css.embeddedCssProvider implementation="com.intellij.javascript.JSEmbeddedCssProvider"/>
+    <css.classOrIdUsagesProvider implementation="com.intellij.javascript.JavaScriptCssUsagesProvider"/>
+    <lang.parserDefinition language="JQuery-CSS"
+                           implementationClass="com.intellij.lang.javascript.frameworks.jquery.JQueryCssParserDefinition"/>
+    <lang.inspectionSuppressor language="JQuery-CSS"
+                               implementationClass="com.intellij.lang.javascript.frameworks.jquery.JQueryCssInspectionSuppressor"/>
+    <css.elementDescriptorProvider order="last, before cssElementDescriptorProvider"
+                                   implementation="com.intellij.lang.javascript.frameworks.jquery.JQueryCssElementDescriptorProvider"/>
+
+    <!-- Stylelint -->
+    <projectConfigurable id="configurable.stylesheets.stylelint"
+                         parentId="configurable.stylesheets"
+                         instance="com.intellij.lang.css.linter.stylelint.StylelintConfigurable"
+                         key="css.stylelint.configurable.name"
+                         bundle="messages.CssBundle"
+                         order="last"/>
+    <localInspection language="CSS"
+                     bundle="messages.CssBundle"
+                     key="css.stylelint.inspection"
+                     groupKey="css.inspections.code.quality.tools.group"
+                     groupPath="CSS"
+                     enabledByDefault="false"
+                     level="ERROR"
+                     implementationClass="com.intellij.lang.css.linter.stylelint.StylelintInspection"
+                     unfair="true"/>
+    <externalAnnotator language="CSS" implementationClass="com.intellij.lang.css.linter.stylelint.StylelintExternalAnnotator"/>
+    <projectService serviceImplementation="com.intellij.lang.css.linter.stylelint.StylelintConfiguration"/>
+    <projectService serviceImplementation="com.intellij.lang.css.linter.stylelint.config.StylelintConfigFileChangeTracker"/>
+    <projectService serviceImplementation="com.intellij.lang.css.linter.stylelint.config.StylelintUnsavedConfigFileManager"/>
+    <lang.substitutor language="JSON" implementationClass="com.intellij.lang.css.linter.stylelint.config.StylelintConfigLangSubstitutor"/>
+    <fileTypeFactory implementation="com.intellij.lang.css.linter.stylelint.config.StylelintConfigFileTypeFactory"/>
+    <iconProvider implementation="com.intellij.lang.css.linter.stylelint.config.StylelintConfigIconProvider"/>
+  </extensions>
+</idea-plugin>

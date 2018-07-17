@@ -1,0 +1,931 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "id": "https://jetbrains.com/stylelintrc.json",
+  "title": "JSON schema for Stylint (CSS linter) configuration files",
+  "description": "Stylelint, CSS linter",
+  "definitions": {
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "warning",
+        "error"
+      ]
+    },
+    "secondaryOption": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/definitions/severity"
+        },
+        "except": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "ignore": {
+          "$ref": "#/definitions/stringArray"
+        }
+      }
+    },
+    "booleanWithMessage": {
+      "oneOf": [
+        { "type": "null" },
+        {"type": "boolean"},
+        {
+          "type": "array",
+          "items": [
+            {"type": "boolean"},
+            { "$ref": "#/definitions/secondaryOption"}
+          ]
+        }
+      ]
+    },
+    "intWithMessage": {
+      "oneOf": [
+        { "type": "null" },
+        {"type": "integer"},
+        {
+          "type": "array",
+          "items": [
+            {"type": "integer"},
+            { "$ref": "#/definitions/secondaryOption"}
+          ]
+        }
+      ]
+    },
+    "stringOrStringArray": {"oneOf": [
+      {
+        "type": "string"
+      },
+      {
+        "$ref": "#/definitions/stringArray"
+      }
+    ]},
+    "intTab": {"oneOf": [{"type": "integer"}, {"type": "string", "enum": ["tab"]}]},
+    "lowerUpper": {"type": "string", "enum": ["lower","upper"]},
+    "shortLong": {"type": "string", "enum": ["short","long"]},
+    "alwaysWherePossibleNever": {"type": "string", "enum": ["always-where-possible","never"]},
+    "alwaysWhereRequiredRecommended": {"type": "string", "enum": ["always-where-required", "always-where-recommended", "always-unless-keyword"]},
+    "numericNamedWherePossible": {"type": "string", "enum": ["numeric", "named-where-possible"]},
+    "alwaysMultiLine": {"type": "string", "enum": ["always", "always-multi-line"]},
+    "alwaysSingleLine": {"type": "string", "enum": ["always", "always-single-line"]},
+    "neverMultiLine": {"type": "string", "enum": ["never", "always-multi-line"]},
+    "alwaysAlwaysMultiLine": {"type": "string", "enum": ["always", "always-multi-line", "never-multi-line"]},
+    "alwaysNeverMultiLine": {"type": "string", "enum": ["always", "never","always-multi-line", "never-multi-line"]},
+    "alwaysAlwaysSingleLine": {"type": "string", "enum": ["always", "never", "always-single-line"]},
+    "alwaysNeverAlwaysSingleLine": {"type": "string", "enum": ["always", "never", "always-single-line", "never-single-line"]},
+    "alwaysNeverSingleMultiLine": {"type": "string", "enum": ["always", "always-single-line", "never-single-line", "always-multi-line", "never-multi-line"]},
+    "alwaysNeverAllLine": {"type": "string", "enum": ["always", "never", "always-single-line", "never-single-line", "always-multi-line", "never-multi-line"]},
+    "alwaysNever": {"type": "string", "enum": ["always", "never"]},
+    "alwaysBeforeAfter": {"type": "string", "enum": ["always-before", "always-after"]},
+    "singleDouble": {"type": "string", "enum": ["single", "double"]},
+    "propertyValue": {"type": "object", "additionalProperties": {"type": "array", "items": {"type": "string"}}},
+    "rules": {
+      "type": "object",
+      "description": "Rules determine what the linter looks for and complains about",
+      "properties": {
+        "color-hex-case": {
+          "description": "Specify lowercase or uppercase for hex colors",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/lowerUpper"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/lowerUpper"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "color-hex-length": {
+          "description": "Specify short or long notation for hex colors",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/shortLong"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/shortLong"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "color-named": {
+          "description": "Require (where possible) or disallow named colors",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysWherePossibleNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysWherePossibleNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "color-no-hex": {
+          "$ref": "#/definitions/booleanWithMessage",
+          "description": "Disallow hex colors"
+        },
+        "color-no-invalid-hex": {
+          "$ref": "#/definitions/booleanWithMessage",
+          "description": "Disallow invalid hex colors"
+        },
+        "font-family-name-quotes": {
+          "description": "Specify whether or not quotation marks should be used around font family names",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysWhereRequiredRecommended"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysWhereRequiredRecommended"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "font-weight-notation": {
+          "description": "Require numeric or named (where possible) font-weight values",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/numericNamedWherePossible"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/numericNamedWherePossible"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "function-blacklist": {
+          "description": "Specify a blacklist of disallowed functions",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/stringOrStringArray"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/stringOrStringArray"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "function-calc-no-unspaced-operator": {
+          "$ref": "#/definitions/booleanWithMessage",
+          "description": "Disallow an unspaced operator within calc functions"
+        },
+        "function-comma-newline-after": {
+          "description": "Require a newline or disallow whitespace after the commas of functions",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "function-comma-newline-before": {
+          "description": "Require a newline or disallow whitespace before the commas of functions",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "function-comma-space-after": {
+          "description": "Require a single space or disallow whitespace after the commas of functions",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "function-comma-space-before": {
+          "description": "Require a single space or disallow whitespace before the commas of functions",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "function-linear-gradient-no-nonstandard-direction": {
+          "description": "Disallow direction values in linear-gradient() calls that are not valid according to the standard syntax",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "function-max-empty-lines": {
+          "description": "Limit the number of adjacent empty lines within functions",
+          "$ref": "#/definitions/intWithMessage"
+        },
+        "function-name-case": {
+          "description": "Specify lowercase or uppercase for function names",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/lowerUpper"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/lowerUpper"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "function-parentheses-newline-inside": {
+          "description": "Require a newline or disallow whitespace on the inside of the parentheses of functions",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "function-parentheses-space-inside": {
+          "description": "Require a single space or disallow whitespace on the inside of the parentheses of functions",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "function-url-data-uris": {
+          "description": "Require or disallow data URIs for urls",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "function-url-no-scheme-relative": {
+          "description": "Disallow scheme-relative urls",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "function-url-quotes": {
+          "description": "Require or disallow quotes for urls",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "function-url-scheme-whitelist": {
+          "description": "Specify a whitelist of allowed url schemes",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/stringOrStringArray"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/stringOrStringArray"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "function-whitelist": {
+          "description": "Specify a whitelist of allowed functions",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/stringOrStringArray"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/stringOrStringArray"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "function-whitespace-after": {
+          "description": "Require or disallow whitespace after functions",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "number-leading-zero": {
+          "description": "Require or disallow a leading zero for fractional numbers less than 1",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "number-max-precision": {
+          "description": "Limit the number of decimal places allowed in numbers",
+          "$ref": "#/definitions/intWithMessage"
+        },
+        "number-no-trailing-zeros": {
+          "description": "Disallow trailing zeros in numbers",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "string-no-newline": {
+          "description": "Disallow (unescaped) newlines in strings",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "string-quotes": {
+          "description": "Specify single or double quotes around strings",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/singleDouble"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/singleDouble"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "length-zero-no-unit": {
+          "description": "Disallow units for zero lengths",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "time-no-imperceptible": {
+          "description": "Disallow <code>animation</code> and <code>transition</code> less than or equal to 100ms",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "unit-blacklist": {
+          "description": "Specify a blacklist of disallowed units",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/stringOrStringArray"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/stringOrStringArray"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "unit-case": {
+          "description": "Specify lowercase or uppercase for units",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/lowerUpper"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/lowerUpper"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "unit-no-unknown": {
+          "description": "Disallow unknown units",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "unit-whitelist": {
+          "description": "Specify a whitelist of allowed units",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/stringOrStringArray"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/stringOrStringArray"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "value-keyword-case": {
+          "description": "Specify lowercase or uppercase for keywords values",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/lowerUpper"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/lowerUpper"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "value-no-vendor-prefix": {
+          "description": "Disallow vendor prefixes for values",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "value-list-comma-newline-after": {
+          "description": "Require a newline or disallow whitespace after the commas of value lists",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "value-list-comma-newline-before": {
+          "description": "Require a newline or disallow whitespace before the commas of value lists",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "value-list-comma-space-after": {
+          "description": "Require a single space or disallow whitespace after the commas of value lists",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "value-list-comma-space-before": {
+          "description": "Require a single space or disallow whitespace before the commas of value lists",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "value-list-max-empty-lines": {
+          "description": "Limit the number of adjacent empty lines within value lists",
+          "$ref": "#/definitions/intWithMessage"
+        },
+        "custom-property-empty-line-before": {
+          "description": "Require or disallow an empty line before custom properties",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "custom-property-no-outside-root": {
+          "description": "Disallow custom properties outside of <code>:root</code> rules",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "custom-property-pattern": {
+          "description": "Specify a pattern for custom properties",
+          "oneOf": [{ "type": "null" }, {"type": "string"}, {
+            "type": "array", "items": [{"type": "string"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "shorthand-property-no-redundant-values": {
+          "description": "Disallow redundant values in shorthand properties",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "property-blacklist": {
+          "description": "Specify a blacklist of disallowed properties",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/stringOrStringArray"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/stringOrStringArray"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "property-case": {
+          "description": "Specify lowercase or uppercase for properties",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/lowerUpper"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/lowerUpper"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "property-no-unknown": {
+          "description": "Disallow unknown properties",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "property-no-vendor-prefix": {
+          "description": "Disallow vendor prefixes for properties",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "property-whitelist": {
+          "description": "Specify a whitelist of allowed properties",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/stringOrStringArray"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/stringOrStringArray"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "keyframe-declaration-no-important": {
+          "description": "Disallow <code>!important</code> within keyframe declarations",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "declaration-bang-space-after": {
+          "description": "Require a single space or disallow whitespace after the bang of declarations",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "declaration-bang-space-before": {
+          "description": "Require a single space or disallow whitespace before the bang of declarations",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "declaration-colon-newline-after": {
+          "description": "Require a newline or disallow whitespace after the colon of declarations",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysMultiLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysMultiLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "declaration-colon-space-after": {
+          "description": "Require a single space or disallow whitespace after the colon of declarations",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysAlwaysSingleLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysAlwaysSingleLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "declaration-colon-space-before": {
+          "description": "Require a single space or disallow whitespace before the colon of declarations",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "declaration-empty-line-before": {
+          "description": "Require or disallow an empty line before declarations",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "declaration-no-important": {
+          "description": "Disallow <code>!important</code> within declarations",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "declaration-property-unit-blacklist": {
+          "description": "Specify a blacklist of disallowed property and unit pairs within declarations",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/propertyValue"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/propertyValue"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "declaration-property-unit-whitelist": {
+          "description": "Specify a whitelist of allowed property and unit pairs within declarations",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/propertyValue"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/propertyValue"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "declaration-property-value-blacklist": {
+          "description": "Specify a blacklist of disallowed property and value pairs within declarations",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/propertyValue"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/propertyValue"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "declaration-property-value-whitelist": {
+          "description": "Specify a whitelist of allowed property and value pairs within declarations",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/propertyValue"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/propertyValue"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "declaration-block-no-duplicate-properties": {
+          "description": "Disallow duplicate properties within declaration blocks",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "declaration-block-no-ignored-properties": {
+          "description": "Disallow property values that are ignored due to another property value in the same rule",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "declaration-block-no-redundant-longhand-properties": {
+          "description": "Disallow longhand properties that can be combined into one shorthand property",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "declaration-block-no-shorthand-property-overrides": {
+          "description": "Disallow shorthand properties that override related longhand properties within declaration blocks",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "declaration-block-properties-order": {
+          "description": "Specify the order of properties within declaration blocks",
+          "oneOf": [{ "type": "null" }, {"type": "string", "enum": "alphabetical"}, {"$ref": "#/definitions/stringArray"},
+            {"type": "array", "items": [{"oneOf": [{"type": "string", "enum": "alphabetical"}, {"$ref": "#/definitions/stringArray"}]},
+              {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "declaration-block-semicolon-newline-after": {
+          "description": "Require a newline or disallow whitespace after the semicolons of declaration blocks",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "declaration-block-semicolon-newline-before": {
+          "description": "Require a newline or disallow whitespace before the semicolons of declaration blocks",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "declaration-block-semicolon-space-after": {
+          "description": "Require a single space or disallow whitespace after the semicolons of declaration blocks",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "declaration-block-semicolon-space-before": {
+          "description": "Require a single space or disallow whitespace before the semicolons of declaration blocks",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "declaration-block-single-line-max-declarations": {
+          "description": "Limit the number of declaration within single line declaration blocks",
+          "$ref": "#/definitions/intWithMessage"
+        },
+        "declaration-block-trailing-semicolon": {
+          "description": "Require or disallow a trailing semicolon within declaration blocks",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "block-closing-brace-empty-line-before": {
+          "description": "Require or disallow an empty line before the closing brace of blocks",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/neverMultiLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/neverMultiLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "block-closing-brace-newline-after": {
+          "description": "Require a newline or disallow whitespace after the closing brace of blocks",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNeverSingleMultiLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNeverSingleMultiLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "block-closing-brace-newline-before": {
+          "description": "Require a newline or disallow whitespace before the closing brace of blocks",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "block-closing-brace-space-after": {
+          "description": "Require a single space or disallow whitespace after the closing brace of blocks",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNeverAllLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNeverAllLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "block-closing-brace-space-before": {
+          "description": "Require a single space or disallow whitespace before the closing brace of blocks",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNeverAllLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNeverAllLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "block-no-empty": {
+          "description": "Disallow empty blocks",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "block-no-single-line": {
+          "description": "Disallow single-line blocks",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "block-opening-brace-newline-after": {
+          "description": "Require a newline after the opening brace of blocks",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "block-opening-brace-newline-before": {
+          "description": "Require a newline or disallow whitespace before the opening brace of blocks",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNeverSingleMultiLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNeverSingleMultiLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "block-opening-brace-space-after": {
+          "description": "Require a single space or disallow whitespace after the opening brace of blocks",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNeverAllLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNeverAllLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "block-opening-brace-space-before": {
+          "description": "Require a single space or disallow whitespace before the opening brace of blocks",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNeverAllLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNeverAllLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-attribute-brackets-space-inside": {
+          "description": "Require a single space or disallow whitespace on the inside of the brackets within attribute selectors",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-attribute-operator-blacklist": {
+          "description": "Specify a blacklist of disallowed attribute operators",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/stringOrStringArray"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/stringOrStringArray"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-attribute-operator-space-after": {
+          "description": "Require a single space or disallow whitespace after operators within attribute selectors",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-attribute-operator-space-before": {
+          "description": "Require a single space or disallow whitespace before operators within attribute selectors",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-attribute-operator-whitelist": {
+          "description": "Specify a whitelist of allowed attribute operators",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/stringOrStringArray"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/stringOrStringArray"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-attribute-quotes": {
+          "description": "Require or disallow quotes for attribute values",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-class-pattern": {
+          "description": "Specify a pattern for class selectors",
+          "oneOf": [{ "type": "null" }, {"type": "string"}, {
+            "type": "array", "items": [{"type": "string"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-combinator-space-after": {
+          "description": "Require a single space or disallow whitespace after the combinators of selectors",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-combinator-space-before": {
+          "description": "Require a single space or disallow whitespace before the combinators of selectors",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-descendant-combinator-no-non-space": {
+          "description": "Disallow non-space characters for descendant combinators of selectors",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "selector-id-pattern": {
+          "description": "Specify a pattern for id selectors",
+          "oneOf": [{ "type": "null" }, {"type": "string"}, {
+            "type": "array", "items": [{"type": "string"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-max-compound-selectors": {
+          "description": "Limit the number of compound selectors in a selector",
+          "$ref": "#/definitions/intWithMessage"
+        },
+        "selector-max-specificity": {
+          "description": "Limit the specificity of selectors",
+          "oneOf": [{ "type": "null" }, {"type": "string"}, {
+            "type": "array", "items": [{"type": "string"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-nested-pattern": {
+          "description": "Specify a pattern for the selectors of rules nested within rules",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/stringOrStringArray"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/stringOrStringArray"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-no-attribute": {
+          "description": "Disallow attribute selectors",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "selector-no-combinator": {
+          "description": "Disallow combinators in selectors",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "selector-no-id": {
+          "description": "Disallow id selectors",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "selector-no-qualifying-type": {
+          "description": "Disallow qualifying a selector by type",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "selector-no-type": {
+          "description": "Disallow type selectors",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "selector-no-universal": {
+          "description": "Disallow the universal selector",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "selector-no-vendor-prefix": {
+          "description": "Disallow vendor prefixes for selectors",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "selector-pseudo-class-blacklist": {
+          "description": "Specify a blacklist of disallowed pseudo-class selectors",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/stringOrStringArray"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/stringOrStringArray"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-pseudo-class-case": {
+          "description": "Specify lowercase or uppercase for pseudo-class selectors",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/lowerUpper"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/lowerUpper"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-pseudo-class-no-unknown": {
+          "description": "Disallow unknown pseudo-class selectors",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "selector-pseudo-class-parentheses-space-inside": {
+          "description": "Require a single space or disallow whitespace on the inside of the parentheses within pseudo-class selectors",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-pseudo-class-whitelist": {
+          "description": "Specify a whitelist of allowed pseudo-class selectors",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/stringOrStringArray"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/stringOrStringArray"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-pseudo-element-case": {
+          "description": "Specify lowercase or uppercase for pseudo-element selectors",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/lowerUpper"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/lowerUpper"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-pseudo-element-colon-notation": {
+          "description": "Specify single or double colon notation for applicable pseudo-elements",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/singleDouble"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/singleDouble"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-pseudo-element-no-unknown": {
+          "description": "Disallow unknown pseudo-element selectors",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "selector-root-no-composition": {
+          "description": "Disallow the composition of <code>:root</code> in selectors",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "selector-type-case": {
+          "description": "Specify lowercase or uppercase for type selector",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/lowerUpper"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/lowerUpper"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-type-no-unknown": {
+          "description": "Disallow unknown type selectors",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "selector-max-empty-lines": {
+          "description": "Limit the number of adjacent empty lines within selectors",
+          "$ref": "#/definitions/intWithMessage"
+        },
+        "selector-list-comma-newline-after": {
+          "description": "Require a newline or disallow whitespace after the commas of selector lists",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-list-comma-newline-before": {
+          "description": "Require a newline or disallow whitespace before the commas of selector lists",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-list-comma-space-after": {
+          "description": "Require a single space or disallow whitespace after the commas of selector lists",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "selector-list-comma-space-before": {
+          "description": "Require a single space or disallow whitespace before the commas of selector lists",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "root-no-standard-properties": {
+          "description": "Disallow standard properties inside <code>:root</code> rules",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "rule-nested-empty-line-before": {
+          "description": "Require or disallow an empty line before nested rules",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNeverMultiLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNeverMultiLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "rule-non-nested-empty-line-before": {
+          "description": "Require or disallow an empty line before non-nested rules",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNeverMultiLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNeverMultiLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "media-feature-colon-space-after": {
+          "description": "Require a single space or disallow whitespace after the colon in media features",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "media-feature-colon-space-before": {
+          "description": "Require a single space or disallow whitespace before the colon in media features",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "media-feature-name-case": {
+          "description": "Specify lowercase or uppercase for media feature names",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/lowerUpper"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/lowerUpper"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "media-feature-name-no-unknown": {
+          "description": "Disallow unknown media feature names",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "media-feature-name-no-vendor-prefix": {
+          "description": "Disallow vendor prefixes for media feature names",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "media-feature-no-missing-punctuation": {
+          "description": "Disallow missing punctuation for non-boolean media features",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "media-feature-parentheses-space-inside": {
+          "description": "Require a single space or disallow whitespace on the inside of the parentheses within media features",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "media-feature-range-operator-space-after": {
+          "description": "Require a single space or disallow whitespace after the range operator in media features",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "media-feature-range-operator-space-before": {
+          "description": "Require a single space or disallow whitespace before the range operator in media features",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "custom-media-pattern": {
+          "description": "Specify a pattern for custom media query names",
+          "oneOf": [{ "type": "null" }, {"type": "string"}, {
+            "type": "array", "items": [{"type": "string"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "media-query-list-comma-newline-after": {
+          "description": "Require a newline or disallow whitespace after the commas of media query lists",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "media-query-list-comma-newline-before": {
+          "description": "Require a newline or disallow whitespace before the commas of media query lists",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysAlwaysMultiLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "media-query-list-comma-space-after": {
+          "description": "Require a single space or disallow whitespace after the commas of media query lists",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "media-query-list-comma-space-before": {
+          "description": "Require a single space or disallow whitespace before the commas of media query lists",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNeverAlwaysSingleLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "at-rule-blacklist": {
+          "description": "Specify a blacklist of disallowed at-rules",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/stringOrStringArray"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/stringOrStringArray"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "at-rule-empty-line-before": {
+          "description": "Require or disallow an empty line before at-rules",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "at-rule-name-case": {
+          "description": "Specify lowercase or uppercase for at-rules names",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/lowerUpper"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/lowerUpper"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "at-rule-name-newline-after": {
+          "description": "Require a newline after at-rule names",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysMultiLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysMultiLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "at-rule-name-space-after": {
+          "description": "Require a single space after at-rule names",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysSingleLine"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysSingleLine"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "at-rule-no-unknown": {
+          "description": "Disallow unknown at-rules",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "at-rule-no-vendor-prefix": {
+          "description": "Disallow vendor prefixes for at-rules",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "at-rule-semicolon-newline-after": {
+          "description": "Require a newline after the semicolon of at-rules",
+          "oneOf": [{ "type": "null" }, {"type": "string", "enum": "always"}, {"$ref": "#/definitions/stringArray"},
+            {"type": "array", "items": [{"type": "string", "enum": "always"}, {"$ref": "#/definitions/stringArray"},
+              {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "at-rule-whitelist": {
+          "description": "Specify a whitelist of allowed at-rules",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/stringOrStringArray"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/stringOrStringArray"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "stylelint-disable-reason": {
+          "description": "Require a reason comment before or after <code>stylelint-disable</code> comments",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysBeforeAfter"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysBeforeAfter"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "comment-empty-line-before": {
+          "description": "Require or disallow an empty line before comments",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "comment-no-empty": {
+          "description": "Disallow empty comments",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "comment-whitespace-inside": {
+          "description": "Require or disallow whitespace on the inside of comment markers",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/alwaysNever"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/alwaysNever"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "comment-word-blacklist": {
+          "description": "Specify a blacklist of disallowed words within comments",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/stringOrStringArray"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/stringOrStringArray"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "indentation": {
+          "description": "Specify indentation",
+          "oneOf": [{ "type": "null" }, {"$ref": "#/definitions/intTab"}, {
+            "type": "array", "items": [{"$ref": "#/definitions/intTab"}, {"$ref": "#/definitions/secondaryOption"}]}]
+        },
+        "max-empty-lines": {
+          "description": "Limit the number of adjacent empty lines",
+          "$ref": "#/definitions/intWithMessage"
+        },
+        "max-line-length": {
+          "description": "Limit the length of a line",
+          "$ref": "#/definitions/intWithMessage"
+        },
+        "max-nesting-depth": {
+          "description": "Limit the depth of nesting",
+          "$ref": "#/definitions/intWithMessage"
+        },
+        "no-browser-hacks": {
+          "description": "Disallow browser hacks that are irrelevant to the browsers you are targeting",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "no-descending-specificity": {
+          "description": "Disallow selectors of lower specificity from coming after overriding selectors of higher specificity",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "no-duplicate-selectors": {
+          "description": "Disallow duplicate selectors",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "no-empty-source": {
+          "description": "Disallow empty sources",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "no-eol-whitespace": {
+          "description": "Disallow end-of-line whitespace",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "no-extra-semicolons": {
+          "description": "Disallow extra semicolons",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "no-indistinguishable-colors": {
+          "description": "Disallow colors that are suspiciously close to being identical",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "no-invalid-double-slash-comments": {
+          "description": "Disallow double-slash comments (<code>//...</code>) which are not supported by CSS",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "no-missing-end-of-source-newline": {
+          "description": "Disallow missing end-of-source newlines",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "no-unknown-animations": {
+          "description": "Disallow animation names that do not correspond to a <code>@keyframes</code> declaration",
+          "$ref": "#/definitions/booleanWithMessage"
+        },
+        "no-unsupported-browser-features": {
+          "description": "Disallow features that are unsupported by the browsers that you are targeting",
+          "$ref": "#/definitions/booleanWithMessage"
+        }
+      }
+    }
+  },
+  "properties": {
+    "rules": {
+      "$ref": "#/definitions/rules"
+    },
+    "extends": {
+      "description": "Existing configuration(s) this configuration extends",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/definitions/stringArray"
+        }
+      ]
+    },
+    "plugins": {
+      "description": "Plugins are rules or sets of rules built by the community that support methodologies, toolsets, non-standard CSS features, or very specific use cases",
+      "$ref": "#/definitions/stringArray"
+    },
+    "processors": {
+      "description": "Processors are functions that hook into stylelint's pipeline, modifying code on its way into stylelint and modifying results on their way out",
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {"type": "string"},
+          {
+            "type": "array",
+            "items": [
+              {"type": "string"},
+              {"type": "object"}
+            ]
+          }
+        ]
+      }
+    },
+    "ignoreFiles": {
+      "description": "Provide a glob or array of globs to ignore specific files",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/definitions/stringArray"
+        }
+      ]
+    },
+    "defaultSeverity": {
+      "description": "The default severity level for all rules that do not have a severity specified in their secondary options",
+      "$ref": "#/definitions/severity"
+    }
+  }
+}
